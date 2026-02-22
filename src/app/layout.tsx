@@ -39,7 +39,7 @@ export default function RootLayout({
                   href="/"
                   className="rounded-full bg-slate-800/80 px-3 py-1.5 text-slate-50 shadow-sm shadow-emerald-400/20"
                 >
-                  Dashboard
+                  Log
                 </Link>
                 <Link
                   href="/import"
@@ -52,6 +52,12 @@ export default function RootLayout({
                   className="rounded-full px-3 py-1.5 text-slate-400 transition hover:bg-slate-900 hover:text-slate-200"
                 >
                   Stock Up
+                </Link>
+                <Link
+                  href="/surprise"
+                  className="rounded-full px-3 py-1.5 text-slate-400 transition hover:bg-slate-900 hover:text-slate-200"
+                >
+                  Surprise
                 </Link>
               </nav>
             </div>

@@ -2,6 +2,7 @@
 
 import { createSupabaseServerClient } from "@/lib/supabase-server";
 import type { PantryStatus, RecipeIngredient } from "@/lib/types";
+import { recalculateFrequencyRanks } from "./frequency";
 
 const DEFAULT_USER_ID = process.env.NEXT_PUBLIC_DEFAULT_USER_ID ?? "00000000-0000-0000-0000-000000000001";
 
@@ -52,6 +53,7 @@ async function getMealAndRecipeData(
 
 /** Run depletion logic for all ingredients in the given recipe (by recipe_id). */
 export async function runDepletionForRecipe(recipeId: string) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Supabase generics
   const supabase = createSupabaseServerClient() as any;
 
   const { data: recipe, error: recipeError } = await supabase
@@ -97,7 +99,12 @@ export async function runDepletionForRecipe(recipeId: string) {
 }
 
 /** Log a meal as consumed and run the depletion engine. */
-export async function logMealAsConsumed(recipeId: string, consumedAt?: Date) {
+export async function logMealAsConsumed(
+  recipeId: string,
+  consumedAt?: Date,
+  options?: { note?: string; tags?: string[] }
+) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Supabase generics
   const supabase = createSupabaseServerClient() as any;
   const at = consumedAt ?? new Date();
 
@@ -107,11 +114,14 @@ export async function logMealAsConsumed(recipeId: string, consumedAt?: Date) {
       recipe_id: recipeId,
       user_id: DEFAULT_USER_ID,
       consumed_at: at.toISOString(),
+      note: options?.note ?? null,
+      tags: options?.tags ?? [],
     })
     .select("id")
     .single();
 
   if (error) return { ok: false, error: error.message };
   await runDepletionForRecipe(recipeId);
+  await recalculateFrequencyRanks();
   return { ok: true, id: inserted?.id };
 }

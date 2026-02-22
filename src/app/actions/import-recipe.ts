@@ -3,6 +3,7 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { createSupabaseServerClient } from "@/lib/supabase-server";
 import type { RecipeIngredient } from "@/lib/types";
+import { recalculateFrequencyRanks } from "./frequency";
 
 const geminiApiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY;
 const genAI = geminiApiKey ? new GoogleGenerativeAI(geminiApiKey) : null;
@@ -105,6 +106,7 @@ ${html.slice(0, 12000)}`;
 /** Save recipe to Supabase and optionally ensure pantry_staples rows for each ingredient. */
 export async function saveRecipe(recipe: ScrapedRecipe, sourceUrl: string | null) {
   const supabase = createSupabaseServerClient();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Supabase generics
   const { data, error } = await (supabase as any)
     .from("recipes")
     .insert({
@@ -121,6 +123,7 @@ export async function saveRecipe(recipe: ScrapedRecipe, sourceUrl: string | null
   for (const ing of recipe.ingredients) {
     const name = (ing.name || "").trim();
     if (!name) continue;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Supabase generics
     const { error: stapleError } = await (supabase as any)
       .from("pantry_staples")
       .insert({
@@ -130,5 +133,6 @@ export async function saveRecipe(recipe: ScrapedRecipe, sourceUrl: string | null
     if (stapleError?.code === "23505") continue;
   }
 
+  await recalculateFrequencyRanks();
   return { ok: true, id: data?.id };
 }

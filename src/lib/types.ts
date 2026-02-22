@@ -1,10 +1,14 @@
 export type PantryStatus = "Full" | "Half" | "Low" | "Out";
 
+export type MealTag = "Quick" | "Comfort" | "Healthy";
+
 export interface PantryStaple {
   id: string;
   name: string;
   status: PantryStatus;
   last_restocked: string | null;
+  frequency_rank?: number;
+  marked_stocked_at?: string | null;
 }
 
 export interface RecipeIngredient {
@@ -20,6 +24,7 @@ export interface Recipe {
   instructions: string;
   ingredients: RecipeIngredient[];
   source_url: string | null;
+  edit_count?: number;
 }
 
 export interface MealHistory {
@@ -27,6 +32,8 @@ export interface MealHistory {
   recipe_id: string;
   user_id: string;
   consumed_at: string;
+  note?: string | null;
+  tags?: MealTag[];
 }
 
 export interface Database {
