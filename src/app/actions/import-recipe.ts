@@ -55,7 +55,10 @@ ${html.slice(0, 12000)}`;
       return { ok: false, error: "Invalid recipe structure" };
     }
     parsed.instructions = parsed.instructions ?? "";
-    parsed.ingredients = (parsed.ingredients??).map(
+    // Ensure ingredients is an array and map safely
+    const rawIngredients = Array.isArray(parsed.ingredients)? parsed.ingredients :;
+    
+    parsed.ingredients = rawIngredients.map(
       (i: any) => ({
         name: String(i.name?? ""),
         qty: typeof i.qty === "number"? i.qty : null,
