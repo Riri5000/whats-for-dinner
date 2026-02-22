@@ -55,17 +55,17 @@ ${html.slice(0, 12000)}`;
       return { ok: false, error: "Invalid recipe structure" };
     }
     parsed.instructions = parsed.instructions ?? "";
-    // Ensure ingredients is an array and map safely
-    const rawIngredients = Array.isArray(parsed.ingredients)? parsed.ingredients :;
+  // Ensure ingredients is an array and map safely
+  const rawIngredients = Array.isArray(parsed.ingredients)? parsed.ingredients :;
     
-    parsed.ingredients = rawIngredients.map(
-      (i: any) => ({
-        name: String(i.name?? ""),
-        qty: typeof i.qty === "number"? i.qty : null,
-        unit: String(i.unit?? ""),
-        is_essential: Boolean(i.is_essential?? true)
-      })
-    );
+  parsed.ingredients = rawIngredients.map(
+    (i: any) => ({
+      name: String(i.name?? ""),
+      qty: typeof i.qty === "number"? i.qty : null,
+      unit: String(i.unit?? ""),
+      is_essential: Boolean(i.is_essential?? true)
+    })
+  );
     return { ok: true, recipe: parsed };
   } catch (e) {
     return {
