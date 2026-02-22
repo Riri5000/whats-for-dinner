@@ -55,14 +55,13 @@ ${html.slice(0, 12000)}`;
       return { ok: false, error: "Invalid recipe structure" };
     }
     parsed.instructions = parsed.instructions ?? "";
-    parsed.ingredients = (parsed.ingredients ?? []).map(
-      (i: Record<string, unknown>) =>
-        ({
-          name: String(i.name ?? ""),
-          qty: typeof i.qty === "number" ? i.qty : null,
-          unit: i.unit != null ? String(i.unit) : null,
-          is_essential: Boolean(i.is_essential ?? true),
-        }) as RecipeIngredient
+    parsed.ingredients = (parsed.ingredients??).map(
+      (i: any) => ({
+        name: String(i.name?? ""),
+        qty: typeof i.qty === "number"? i.qty : null,
+        unit: String(i.unit?? ""),
+        is_essential: Boolean(i.is_essential?? true)
+      })
     );
     return { ok: true, recipe: parsed };
   } catch (e) {
