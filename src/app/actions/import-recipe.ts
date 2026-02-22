@@ -1,8 +1,8 @@
-\"use server\";
+"use server";
 
-import { GoogleGenerativeAI } from \"@google/generative-ai\";
-import { createSupabaseServerClient } from \"@/lib/supabase-server\";
-import type { RecipeIngredient } from \"@/lib/types\";
+import { GoogleGenerativeAI } from "@google/generative-ai";
+import { createSupabaseServerClient } from "@/lib/supabase-server";
+import type { RecipeIngredient } from "@/lib/types";
 
 const geminiApiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY;
 const genAI = geminiApiKey ? new GoogleGenerativeAI(geminiApiKey) : null;
@@ -18,48 +18,48 @@ export async function scrapeRecipeFromUrl(
   url: string
 ): Promise<{ ok: true; recipe: ScrapedRecipe } | { ok: false; error: string }> {
   if (!geminiApiKey || !genAI) {
-    return { ok: false, error: \"GOOGLE_GENERATIVE_AI_API_KEY not set\" };
+    return { ok: false, error: "GOOGLE_GENERATIVE_AI_API_KEY not set" };
   }
 
   let html: string;
   try {
     const res = await fetch(url, {
-      headers: { \"User-Agent\": \"Mozilla/5.0 (compatible; RecipeBot/1.0)\" },
+      headers: { "User-Agent": "Mozilla/5.0 (compatible; RecipeBot/1.0)" },
     });
     if (!res.ok) return { ok: false, error: `Fetch failed: ${res.status}` };
     html = await res.text();
   } catch (e) {
     return {
       ok: false,
-      error: e instanceof Error ? e.message : \"Failed to fetch URL\",
+      error: e instanceof Error ? e.message : "Failed to fetch URL",
     };
   }
 
   const prompt = `Extract the recipe from this web page. Return a single JSON object (no markdown, no code fence) with:
 - title: string
 - instructions: string (full instructions, can be multi-line)
-- ingredients: array of { \"name\": string, \"qty\": number or null, \"unit\": string or null, \"is_essential\": boolean }
+- ingredients: array of { "name": string, "qty": number or null, "unit": string or null, "is_essential": boolean }
   Use is_essential: true for core ingredients, false for garnishes, optional toppings, or vanity items.
 
 Page content (first 12000 chars):
 ${html.slice(0, 12000)}`;
 
   try {
-    const model = genAI.getGenerativeModel({ model: \"gemini-1.5-flash\" });
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
     const result = await model.generateContent(prompt);
     const raw = result.response.text();
-    if (!raw) return { ok: false, error: \"Empty response from Gemini\" };
+    if (!raw) return { ok: false, error: "Empty response from Gemini" };
 
     const parsed = JSON.parse(raw) as ScrapedRecipe;
     if (!parsed.title || !Array.isArray(parsed.ingredients)) {
-      return { ok: false, error: \"Invalid recipe structure\" };
+      return { ok: false, error: "Invalid recipe structure" };
     }
-    parsed.instructions = parsed.instructions ?? \"\";
+    parsed.instructions = parsed.instructions ?? "";
     parsed.ingredients = (parsed.ingredients ?? []).map(
       (i: Record<string, unknown>) =>
         ({
-          name: String(i.name ?? \"\"),
-          qty: typeof i.qty === \"number\" ? i.qty : null,
+          name: String(i.name ?? ""),
+          qty: typeof i.qty === "number" ? i.qty : null,
           unit: i.unit != null ? String(i.unit) : null,
           is_essential: Boolean(i.is_essential ?? true),
         }) as RecipeIngredient
@@ -68,7 +68,7 @@ ${html.slice(0, 12000)}`;
   } catch (e) {
     return {
       ok: false,
-      error: e instanceof Error ? e.message : \"Gemini request failed\",
+      error: e instanceof Error ? e.message : "Gemini request failed",
     };
   }
 }
@@ -77,26 +77,26 @@ ${html.slice(0, 12000)}`;
 export async function saveRecipe(recipe: ScrapedRecipe, sourceUrl: string | null) {
   const supabase = createSupabaseServerClient();
   const { data, error } = await supabase
-    .from(\"recipes\")
+    .from("recipes")
     .insert({
       title: recipe.title,
       instructions: recipe.instructions,
       ingredients: recipe.ingredients,
       source_url: sourceUrl,
     })
-    .select(\"id\")
+    .select("id")
     .single();
 
   if (error) return { ok: false, error: error.message };
 
   for (const ing of recipe.ingredients) {
-    const name = (ing.name || \"\").trim();
+    const name = (ing.name || "").trim();
     if (!name) continue;
-    const { error: stapleError } = await supabase.from(\"pantry_staples\").insert({
+    const { error: stapleError } = await supabase.from("pantry_staples").insert({
       name,
-      status: \"Full\",
+      status: "Full",
     });
-    if (stapleError?.code === \"23505\") continue;
+    if (stapleError?.code === "23505") continue;
   }
 
   return { ok: true, id: data?.id };
