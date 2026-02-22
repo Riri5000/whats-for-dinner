@@ -55,16 +55,44 @@ ${html.slice(0, 12000)}`;
       return { ok: false, error: "Invalid recipe structure" };
     }
     parsed.instructions = parsed.instructions ?? "";
-// We use rawIngredients just to be 100% safe for the .map()
-const rawIngredients = Array.isArray(parsed.ingredients) ? parsed.ingredients : [];    
-  
-parsed.ingredients = rawIngredients.map((i: any) => ({
-  name: String(i.name ?? "Unknown Ingredient").trim(),
-  // Try to parse a number even if Gemini returns it as a string "2"
-  qty: typeof i.qty === "number" ? i.qty : (parseFloat(i.qty) || null),
-  unit: i.unit ? String(i.unit).trim() : null,
-  is_essential: i.is_essential !== undefined ? Boolean(i.is_essential) : true
-}));
+    const rawIngredients = Array.isArray(parsed.ingredients)
+      ? (parsed.ingredients as unknown[])
+      : [];
+    parsed.ingredients = rawIngredients.map((raw) => {
+      const i = raw as { [key: string]: unknown };
+
+      const nameValue = i.name as string | undefined;
+      const name = (nameValue ?? "Unknown Ingredient").trim();
+
+      const qtyValue = i.qty as unknown;
+      let qty: number | null = null;
+      if (typeof qtyValue === "number") {
+        qty = qtyValue;
+      } else if (
+        typeof qtyValue === "string" &&
+        qtyValue.trim() !== "" &&
+        !Number.isNaN(Number(qtyValue))
+      ) {
+        qty = Number(qtyValue);
+      }
+
+      const unitRaw = i.unit as unknown;
+      const unit =
+        unitRaw != null && String(unitRaw).trim() !== ""
+          ? String(unitRaw).trim()
+          : null;
+
+      const isEssentialRaw = i.is_essential as unknown;
+      const is_essential =
+        typeof isEssentialRaw === "boolean" ? isEssentialRaw : true;
+
+      return {
+        name,
+        qty,
+        unit,
+        is_essential,
+      } satisfies RecipeIngredient;
+    }) as RecipeIngredient[];
     return { ok: true, recipe: parsed };
   } catch (e) {
     return {
@@ -77,7 +105,7 @@ parsed.ingredients = rawIngredients.map((i: any) => ({
 /** Save recipe to Supabase and optionally ensure pantry_staples rows for each ingredient. */
 export async function saveRecipe(recipe: ScrapedRecipe, sourceUrl: string | null) {
   const supabase = createSupabaseServerClient();
-  const { data, error } = await supabase
+  const { data, error } = await (supabase as any)
     .from("recipes")
     .insert({
       title: recipe.title,
@@ -93,10 +121,12 @@ export async function saveRecipe(recipe: ScrapedRecipe, sourceUrl: string | null
   for (const ing of recipe.ingredients) {
     const name = (ing.name || "").trim();
     if (!name) continue;
-    const { error: stapleError } = await supabase.from("pantry_staples").insert({
-      name,
-      status: "Full",
-    });
+    const { error: stapleError } = await (supabase as any)
+      .from("pantry_staples")
+      .insert({
+        name,
+        status: "Full",
+      });
     if (stapleError?.code === "23505") continue;
   }
 

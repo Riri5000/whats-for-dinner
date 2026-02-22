@@ -30,7 +30,9 @@ async function getMealAndRecipeData(
   supabase: ReturnType<typeof createSupabaseServerClient>
 ): Promise<{ mealRecipeIds: string[]; recipeIdToIngredients: Map<string, RecipeIngredient[]> }> {
   const { data: history } = await supabase.from("meal_history").select("recipe_id");
-  const mealRecipeIds = (history ?? []).map((r) => r.recipe_id);
+  const mealRecipeIds = ((history ?? []) as Array<{ recipe_id: string }>).map(
+    (r) => r.recipe_id
+  );
   const recipeIds = [...new Set(mealRecipeIds)];
   if (!recipeIds.length) return { mealRecipeIds: [], recipeIdToIngredients: new Map() };
 
@@ -39,15 +41,18 @@ async function getMealAndRecipeData(
     .select("id, ingredients")
     .in("id", recipeIds);
   const recipeIdToIngredients = new Map<string, RecipeIngredient[]>();
-  for (const r of recipes ?? []) {
-    recipeIdToIngredients.set(r.id, (r.ingredients as RecipeIngredient[]) ?? []);
+  for (const r of (recipes ?? []) as Array<{ id: string; ingredients: unknown }>) {
+    recipeIdToIngredients.set(
+      r.id,
+      ((r.ingredients as RecipeIngredient[]) ?? []) as RecipeIngredient[]
+    );
   }
   return { mealRecipeIds, recipeIdToIngredients };
 }
 
 /** Run depletion logic for all ingredients in the given recipe (by recipe_id). */
 export async function runDepletionForRecipe(recipeId: string) {
-  const supabase = createSupabaseServerClient();
+  const supabase = createSupabaseServerClient() as any;
 
   const { data: recipe, error: recipeError } = await supabase
     .from("recipes")
@@ -93,7 +98,7 @@ export async function runDepletionForRecipe(recipeId: string) {
 
 /** Log a meal as consumed and run the depletion engine. */
 export async function logMealAsConsumed(recipeId: string, consumedAt?: Date) {
-  const supabase = createSupabaseServerClient();
+  const supabase = createSupabaseServerClient() as any;
   const at = consumedAt ?? new Date();
 
   const { data: inserted, error } = await supabase

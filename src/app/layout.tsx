@@ -1,17 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   title: "What's with Dinner",
@@ -27,7 +16,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-slate-950 text-slate-50`}
+        className="antialiased bg-slate-950 text-slate-50"
       >
         <div className="flex min-h-screen flex-col">
           <header className="border-b border-slate-800/60 bg-slate-950/80 backdrop-blur">
@@ -46,24 +35,24 @@ export default function RootLayout({
                 </div>
               </Link>
               <nav className="hidden gap-2 text-xs font-medium text-slate-300 sm:flex">
-                <a
+                <Link
                   href="/"
                   className="rounded-full bg-slate-800/80 px-3 py-1.5 text-slate-50 shadow-sm shadow-emerald-400/20"
                 >
                   Dashboard
-                </a>
-                <a
+                </Link>
+                <Link
                   href="/import"
                   className="rounded-full px-3 py-1.5 text-slate-400 transition hover:bg-slate-900 hover:text-slate-200"
                 >
                   Import
-                </a>
-                <a
+                </Link>
+                <Link
                   href="/stock-up"
                   className="rounded-full px-3 py-1.5 text-slate-400 transition hover:bg-slate-900 hover:text-slate-200"
                 >
                   Stock Up
-                </a>
+                </Link>
               </nav>
             </div>
           </header>

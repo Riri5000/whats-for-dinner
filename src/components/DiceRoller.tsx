@@ -68,11 +68,13 @@ export function DiceRoller({ onRoll }: DiceRollerProps) {
     ]);
     if (rRes.error) setLoadError(rRes.error.message);
     else setRecipes((rRes.data ?? []) as Recipe[]);
-    if (sRes.error) setLoadError((e) => e || sRes.error.message);
+    if (sRes.error) setLoadError(sRes.error.message);
     else setStaples((sRes.data ?? []) as PantryStaple[]);
   }, []);
 
   useEffect(() => {
+    // Data-fetching effect; we intentionally call setState here to hydrate from Supabase.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     loadData();
   }, [loadData]);
 
