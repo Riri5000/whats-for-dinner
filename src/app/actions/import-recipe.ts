@@ -55,17 +55,16 @@ ${html.slice(0, 12000)}`;
       return { ok: false, error: "Invalid recipe structure" };
     }
     parsed.instructions = parsed.instructions ?? "";
-  // Ensure ingredients is an array and map safely
-  const rawIngredients = Array.isArray(parsed.ingredients)? parsed.ingredients :;
-    
-  parsed.ingredients = rawIngredients.map(
-    (i: any) => ({
-      name: String(i.name?? ""),
-      qty: typeof i.qty === "number"? i.qty : null,
-      unit: String(i.unit?? ""),
-      is_essential: Boolean(i.is_essential?? true)
-    })
-  );
+// We use rawIngredients just to be 100% safe for the .map()
+const rawIngredients = Array.isArray(parsed.ingredients) ? parsed.ingredients : [];    
+  
+parsed.ingredients = rawIngredients.map((i: any) => ({
+  name: String(i.name ?? "Unknown Ingredient").trim(),
+  // Try to parse a number even if Gemini returns it as a string "2"
+  qty: typeof i.qty === "number" ? i.qty : (parseFloat(i.qty) || null),
+  unit: i.unit ? String(i.unit).trim() : null,
+  is_essential: i.is_essential !== undefined ? Boolean(i.is_essential) : true
+}));
     return { ok: true, recipe: parsed };
   } catch (e) {
     return {
