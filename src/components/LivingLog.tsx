@@ -216,10 +216,10 @@ export function LivingLog() {
                       : "border-slate-700/80 bg-slate-900/50 hover:bg-slate-800/50"
                   }`}
                 >
-                  <span className="text-[10px] text-slate-500">
+                  <span className="text-[10px] text-slate-500" suppressHydrationWarning>
                     {DAY_NAMES[d.getDay()]}
                   </span>
-                  <span className="text-sm font-medium">{d.getDate()}</span>
+                  <span className="text-sm font-medium" suppressHydrationWarning>{d.getDate()}</span>
                   {dayMeals.length > 0 && (
                     <span className="mt-0.5 text-[10px] text-emerald-400">
                       {dayMeals.length} meal{dayMeals.length !== 1 ? "s" : ""}
