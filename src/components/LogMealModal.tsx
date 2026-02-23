@@ -138,7 +138,7 @@ export function LogMealModal({
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 z-50 flex items-end justify-center bg-[#1A1A1A]/60 backdrop-blur-sm sm:items-center"
+        className="fixed inset-0 z-50 flex items-end justify-center bg-[#1a1614]/60 backdrop-blur-sm sm:items-center"
         onClick={onClose}
       >
         <motion.div
@@ -146,14 +146,14 @@ export function LogMealModal({
           animate={{ y: 0 }}
           exit={{ y: "100%" }}
           transition={{ type: "spring", damping: 25, stiffness: 300 }}
-          className="w-full max-w-lg rounded-t-3xl border border-[#D5D3C4] bg-[#F5F3EB] shadow-xl sm:rounded-3xl"
+          className="w-full max-w-lg rounded-t-3xl border border-[#e1d7cb] bg-[#faf8f5] shadow-xl sm:rounded-3xl"
           onClick={(e) => e.stopPropagation()}
         >
-          <div className="flex items-center justify-between border-b border-[#D5D3C4] px-5 py-4">
-            <h2 className="text-base font-bold text-[#1A1A1A]">Log a meal</h2>
+          <div className="flex items-center justify-between border-b border-[#e1d7cb] px-5 py-4">
+            <h2 className="text-base font-bold text-[#1a1614]">Log a meal</h2>
             <button
               onClick={onClose}
-              className="rounded-xl p-2 text-[#A5B8A2] transition hover:bg-[#F2EB8D]"
+              className="rounded-xl p-2 text-[#6d8069] transition hover:bg-[#f4e9c8]"
               aria-label="Close"
             >
               <X className="h-4 w-4" />
@@ -175,8 +175,8 @@ export function LogMealModal({
                   onClick={() => setMode(key)}
                   className={`whitespace-nowrap rounded-full px-4 py-2 text-xs font-semibold transition ${
                     mode === key
-                      ? "bg-[#A5B8A2] text-[#F5F3EB]"
-                      : "border border-[#D5D3C4] bg-[#F5F3EB] text-[#A5B8A2] hover:bg-[#F2EB8D]"
+                      ? "bg-[#a8b8a5] text-[#faf8f5]"
+                      : "border border-[#e1d7cb] bg-[#faf8f5] text-[#6d8069] hover:bg-[#f4e9c8]"
                   }`}
                 >
                   {label}
@@ -187,7 +187,7 @@ export function LogMealModal({
             {/* Pick recipe mode */}
             {mode === "pick" && (
               <div className="space-y-3">
-                <p className="text-xs text-[#A5B8A2]">
+                <p className="text-xs text-[#6d8069]">
                   For {selectedDate.toLocaleDateString()}
                 </p>
                 {recipes.length > 0 && (
@@ -196,11 +196,11 @@ export function LogMealModal({
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     placeholder="Search recipes..."
-                    className="w-full rounded-2xl border border-[#D5D3C4] bg-[#F2EB8D] px-4 py-3 text-sm text-[#1A1A1A] placeholder:text-[#B4B4B4] focus:border-[#A5B8A2] focus:outline-none"
+                    className="w-full rounded-2xl border border-[#e1d7cb] bg-[#f4e9c8] px-4 py-3 text-sm text-[#1a1614] placeholder:text-[#8a9e87] focus:border-[#a8b8a5] focus:outline-none"
                   />
                 )}
                 {recipes.length === 0 ? (
-                  <p className="text-sm text-[#B4B4B4]">
+                  <p className="text-sm text-[#8a9e87]">
                     No recipes yet. Switch to &quot;New recipe&quot; to create one.
                   </p>
                 ) : (
@@ -212,8 +212,8 @@ export function LogMealModal({
                           onClick={() => setSelectedId(r.id)}
                           className={`w-full rounded-2xl border px-4 py-3 text-left text-sm font-medium transition ${
                             selectedId === r.id
-                              ? "border-[#A5B8A2] bg-[#A5B8A2] text-[#F5F3EB]"
-                              : "border-[#D5D3C4] bg-[#F5F3EB] text-[#1A1A1A] hover:bg-[#F2EB8D]"
+                              ? "border-[#a8b8a5] bg-[#a8b8a5] text-[#faf8f5]"
+                              : "border-[#e1d7cb] bg-[#faf8f5] text-[#1a1614] hover:bg-[#f4e9c8]"
                           }`}
                         >
                           {r.title}
@@ -228,7 +228,7 @@ export function LogMealModal({
                   </ul>
                 )}
                 <div>
-                  <p className="mb-2 text-xs font-medium text-[#A5B8A2]">Optional tags</p>
+                  <p className="mb-2 text-xs font-medium text-[#6d8069]">Optional tags</p>
                   <div className="flex gap-2">
                     {MEAL_TAGS.map((t) => (
                       <button
@@ -237,8 +237,8 @@ export function LogMealModal({
                         onClick={() => toggleTag(t)}
                         className={`rounded-full px-4 py-2 text-xs font-semibold transition ${
                           tags.includes(t)
-                            ? "bg-[#A5B8A2] text-[#F5F3EB]"
-                            : "border border-[#D5D3C4] bg-[#F5F3EB] text-[#A5B8A2] hover:bg-[#F2EB8D]"
+                            ? "bg-[#a8b8a5] text-[#faf8f5]"
+                            : "border border-[#e1d7cb] bg-[#faf8f5] text-[#6d8069] hover:bg-[#f4e9c8]"
                         }`}
                       >
                         {t}
@@ -252,7 +252,7 @@ export function LogMealModal({
             {/* Create recipe mode */}
             {mode === "create" && (
               <div className="space-y-3">
-                <p className="text-xs text-[#A5B8A2]">
+                <p className="text-xs text-[#6d8069]">
                   Create a new recipe and log it for{" "}
                   {selectedDate.toLocaleDateString()}
                 </p>
@@ -261,10 +261,10 @@ export function LogMealModal({
                   value={createTitle}
                   onChange={(e) => setCreateTitle(e.target.value)}
                   placeholder="Recipe name"
-                  className="w-full rounded-2xl border border-[#D5D3C4] bg-[#F2EB8D] px-4 py-3 text-sm text-[#1A1A1A] placeholder:text-[#B4B4B4] focus:border-[#A5B8A2] focus:outline-none"
+                  className="w-full rounded-2xl border border-[#e1d7cb] bg-[#f4e9c8] px-4 py-3 text-sm text-[#1a1614] placeholder:text-[#8a9e87] focus:border-[#a8b8a5] focus:outline-none"
                 />
                 <div>
-                  <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-[#A5B8A2]">
+                  <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-[#6d8069]">
                     Ingredients
                   </p>
                   <div className="space-y-2">
@@ -277,7 +277,7 @@ export function LogMealModal({
                             updateIngredient(i, "name", e.target.value)
                           }
                           placeholder="Ingredient"
-                          className="flex-1 rounded-xl border border-[#D5D3C4] bg-[#F5F3EB] px-3 py-2 text-sm text-[#1A1A1A] placeholder:text-[#B4B4B4] focus:border-[#A5B8A2] focus:outline-none"
+                          className="flex-1 rounded-xl border border-[#e1d7cb] bg-[#faf8f5] px-3 py-2 text-sm text-[#1a1614] placeholder:text-[#8a9e87] focus:border-[#a8b8a5] focus:outline-none"
                         />
                         <input
                           type="text"
@@ -286,7 +286,7 @@ export function LogMealModal({
                             updateIngredient(i, "qty", e.target.value)
                           }
                           placeholder="Qty"
-                          className="w-16 rounded-xl border border-[#D5D3C4] bg-[#F5F3EB] px-2 py-2 text-sm text-[#1A1A1A] placeholder:text-[#B4B4B4] focus:border-[#A5B8A2] focus:outline-none"
+                          className="w-16 rounded-xl border border-[#e1d7cb] bg-[#faf8f5] px-2 py-2 text-sm text-[#1a1614] placeholder:text-[#8a9e87] focus:border-[#a8b8a5] focus:outline-none"
                         />
                         <input
                           type="text"
@@ -295,12 +295,12 @@ export function LogMealModal({
                             updateIngredient(i, "unit", e.target.value)
                           }
                           placeholder="Unit"
-                          className="w-16 rounded-xl border border-[#D5D3C4] bg-[#F5F3EB] px-2 py-2 text-sm text-[#1A1A1A] placeholder:text-[#B4B4B4] focus:border-[#A5B8A2] focus:outline-none"
+                          className="w-16 rounded-xl border border-[#e1d7cb] bg-[#faf8f5] px-2 py-2 text-sm text-[#1a1614] placeholder:text-[#8a9e87] focus:border-[#a8b8a5] focus:outline-none"
                         />
                         {createIngredients.length > 1 && (
                           <button
                             onClick={() => removeIngredient(i)}
-                            className="rounded-xl p-2 text-[#B4B4B4] hover:text-[#E61919]"
+                            className="rounded-xl p-2 text-[#8a9e87] hover:text-[#e07a5f]"
                           >
                             <X className="h-4 w-4" />
                           </button>
@@ -310,7 +310,7 @@ export function LogMealModal({
                   </div>
                   <button
                     onClick={addIngredientRow}
-                    className="mt-2 inline-flex items-center gap-1 text-xs font-semibold text-[#A5B8A2] transition hover:text-[#A5B8A2]"
+                    className="mt-2 inline-flex items-center gap-1 text-xs font-semibold text-[#a8b8a5] transition hover:text-[#6d8069]"
                   >
                     <Plus className="h-3.5 w-3.5" />
                     Add ingredient
@@ -321,10 +321,10 @@ export function LogMealModal({
                   onChange={(e) => setCreateInstructions(e.target.value)}
                   placeholder="Instructions (optional)"
                   rows={2}
-                  className="w-full rounded-2xl border border-[#D5D3C4] bg-[#F5F3EB] px-4 py-3 text-sm text-[#1A1A1A] placeholder:text-[#B4B4B4] focus:border-[#A5B8A2] focus:outline-none"
+                  className="w-full rounded-2xl border border-[#e1d7cb] bg-[#faf8f5] px-4 py-3 text-sm text-[#1a1614] placeholder:text-[#8a9e87] focus:border-[#a8b8a5] focus:outline-none"
                 />
                 <div>
-                  <p className="mb-2 text-xs font-medium text-[#A5B8A2]">Optional tags</p>
+                  <p className="mb-2 text-xs font-medium text-[#6d8069]">Optional tags</p>
                   <div className="flex gap-2">
                     {MEAL_TAGS.map((t) => (
                       <button
@@ -333,8 +333,8 @@ export function LogMealModal({
                         onClick={() => toggleTag(t)}
                         className={`rounded-full px-4 py-2 text-xs font-semibold transition ${
                           tags.includes(t)
-                            ? "bg-[#A5B8A2] text-[#F5F3EB]"
-                            : "border border-[#D5D3C4] bg-[#F5F3EB] text-[#A5B8A2] hover:bg-[#F2EB8D]"
+                            ? "bg-[#a8b8a5] text-[#faf8f5]"
+                            : "border border-[#e1d7cb] bg-[#faf8f5] text-[#6d8069] hover:bg-[#f4e9c8]"
                         }`}
                       >
                         {t}
@@ -348,7 +348,7 @@ export function LogMealModal({
             {/* Quick note mode */}
             {mode === "note" && (
               <div>
-                <label className="mb-2 block text-xs font-medium text-[#A5B8A2]">
+                <label className="mb-2 block text-xs font-medium text-[#6d8069]">
                   What did you have?
                 </label>
                 <input
@@ -356,17 +356,17 @@ export function LogMealModal({
                   value={note}
                   onChange={(e) => setNote(e.target.value)}
                   placeholder="e.g. Leftover pizza"
-                  className="w-full rounded-2xl border border-[#D5D3C4] bg-[#F2EB8D] px-4 py-3 text-sm text-[#1A1A1A] placeholder:text-[#B4B4B4] focus:border-[#A5B8A2] focus:outline-none"
+                  className="w-full rounded-2xl border border-[#e1d7cb] bg-[#f4e9c8] px-4 py-3 text-sm text-[#1a1614] placeholder:text-[#8a9e87] focus:border-[#a8b8a5] focus:outline-none"
                 />
               </div>
             )}
           </div>
 
-          <div className="border-t border-[#D5D3C4] p-5">
+          <div className="border-t border-[#e1d7cb] p-5">
             <button
               onClick={handleLog}
               disabled={pending || !canSubmit()}
-              className="flex w-full items-center justify-center gap-2 rounded-2xl bg-[#A5B8A2] py-3 text-sm font-semibold text-[#F5F3EB] transition hover:bg-[#B4B4B4] disabled:opacity-50"
+              className="flex w-full items-center justify-center gap-2 rounded-2xl bg-[#a8b8a5] py-3 text-sm font-semibold text-[#faf8f5] transition hover:bg-[#8a9e87] disabled:opacity-50"
             >
               {pending ? (
                 <Loader2 className="h-4 w-4 animate-spin" />

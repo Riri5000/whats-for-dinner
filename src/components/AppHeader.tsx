@@ -14,17 +14,17 @@ export function AppHeader() {
   const pathname = usePathname();
 
   return (
-    <header className="border-b border-[#D5D3C4] bg-[#F5F3EB] backdrop-blur">
+    <header className="border-b border-[#e1d7cb] bg-[#faf8f5] backdrop-blur">
       <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-4">
         <Link href="/" className="flex items-center gap-2">
-          <span className="inline-flex h-8 w-8 items-center justify-center rounded-xl bg-[#E61919] text-white text-lg font-bold">
+          <span className="inline-flex h-8 w-8 items-center justify-center rounded-xl bg-[#a8b8a5] text-[#faf8f5] text-lg font-bold">
             W
           </span>
           <div className="flex flex-col leading-tight">
-            <span className="text-sm font-semibold tracking-tight text-[#1A1A1A]">
+            <span className="text-sm font-semibold tracking-tight text-[#1a1614]">
               What&apos;s with Dinner
             </span>
-            <span className="hidden text-[11px] text-[#A5B8A2] sm:block">
+            <span className="hidden text-[11px] text-[#6d8069] sm:block">
               Inventory-free meal decisions
             </span>
           </div>
@@ -38,8 +38,8 @@ export function AppHeader() {
                 href={href}
                 className={`rounded-full px-3 py-1.5 transition ${
                   active
-                    ? "bg-[#A5B8A2] text-white"
-                    : "text-[#1A1A1A] hover:bg-[#F2EB8D] hover:text-[#1A1A1A]"
+                    ? "bg-[#a8b8a5] text-[#faf8f5]"
+                    : "text-[#6d8069] hover:bg-[#f4e9c8] hover:text-[#1a1614]"
                 }`}
               >
                 {label}

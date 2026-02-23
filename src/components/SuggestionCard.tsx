@@ -167,22 +167,22 @@ export function SuggestionCard({
     <motion.div
       initial={{ opacity: 0, y: 4 }}
       animate={{ opacity: 1, y: 0 }}
-      className="rounded-3xl border border-[#D5D3C4] bg-[#C5A37B] p-5 shadow-sm"
+      className="rounded-3xl border border-[#e1d7cb] bg-[#c9b8a0] p-5 shadow-sm"
     >
       {primary ? (
         <>
-          <p className="text-xs font-semibold uppercase tracking-wider text-[#F5F3EB]">
+          <p className="text-xs font-semibold uppercase tracking-wider text-[#faf8f5]">
             Suggestion for {dayName}
           </p>
-          <p className="mt-2 text-base font-bold text-[#1A1A1A]">
+          <p className="mt-2 text-base font-bold text-[#1a1614]">
             You often cook {primary.recipe.title} on {dayName}s. Want that again?
           </p>
-          <p className="mt-1 text-xs text-[#1A1A1A]">{primary.reason}</p>
+          <p className="mt-1 text-xs text-[#2a2520]">{primary.reason}</p>
           <div className="mt-4 flex gap-2">
             <button
               onClick={() => handleLog(primary.recipe.id)}
               disabled={!!loggingId}
-              className="rounded-full bg-[#A5B8A2] px-5 py-2.5 text-sm font-semibold text-[#F5F3EB] transition hover:bg-[#B4B4B4] disabled:opacity-50"
+              className="rounded-full bg-[#a8b8a5] px-5 py-2.5 text-sm font-semibold text-[#faf8f5] transition hover:bg-[#8a9e87] disabled:opacity-50"
             >
               {loggingId === primary.recipe.id ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
@@ -192,7 +192,7 @@ export function SuggestionCard({
             </button>
             <button
               onClick={() => setExpanded(!expanded)}
-              className="inline-flex items-center gap-1.5 rounded-full border border-[#D5D3C4] bg-[#F5F3EB] px-5 py-2.5 text-sm font-medium text-[#1A1A1A] transition hover:bg-[#F2EB8D]"
+              className="inline-flex items-center gap-1.5 rounded-full border border-[#e1d7cb] bg-[#faf8f5] px-5 py-2.5 text-sm font-medium text-[#1a1614] transition hover:bg-[#f4e9c8]"
             >
               Show alternatives
               <ChevronDown
@@ -202,7 +202,7 @@ export function SuggestionCard({
           </div>
         </>
       ) : (
-        <p className="text-sm text-[#1A1A1A]">
+        <p className="text-sm text-[#2a2520]">
           Log a few meals to get personalized suggestions.
         </p>
       )}
@@ -213,21 +213,21 @@ export function SuggestionCard({
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="mt-4 space-y-2 border-t border-[#D5D3C4] pt-4"
+            className="mt-4 space-y-2 border-t border-[#e1d7cb] pt-4"
           >
             {alternatives.slice(0, 5).map((alt) => (
               <div
                 key={alt.recipe.id}
-                className="flex items-center justify-between rounded-2xl border border-[#D5D3C4] bg-[#F5F3EB] px-4 py-3"
+                className="flex items-center justify-between rounded-2xl border border-[#e1d7cb] bg-[#faf8f5] px-4 py-3"
               >
                 <div>
-                  <p className="text-sm font-semibold text-[#1A1A1A]">{alt.recipe.title}</p>
-                  <p className="text-xs text-[#A5B8A2]">{alt.reason}</p>
+                  <p className="text-sm font-semibold text-[#1a1614]">{alt.recipe.title}</p>
+                  <p className="text-xs text-[#6d8069]">{alt.reason}</p>
                 </div>
                 <button
                   onClick={() => handleLog(alt.recipe.id)}
                   disabled={!!loggingId}
-                  className="rounded-full border border-[#D5D3C4] bg-[#F2EB8D] px-4 py-2 text-xs font-medium text-[#1A1A1A] transition hover:bg-[#C5A37B] disabled:opacity-50"
+                  className="rounded-full border border-[#e1d7cb] bg-[#f4e9c8] px-4 py-2 text-xs font-medium text-[#1a1614] transition hover:bg-[#c9b8a0] disabled:opacity-50"
                 >
                   {loggingId === alt.recipe.id ? (
                     <Loader2 className="h-3.5 w-3.5 animate-spin" />
