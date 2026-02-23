@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#020617",
+  themeColor: "#f5f1e8",
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
@@ -24,7 +24,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="antialiased bg-slate-950 text-slate-50">
+      <body className="antialiased bg-[#f5f1e8] text-[#1a1614]">
         <div className="flex min-h-screen flex-col">
           <AppHeader />
           <main className="flex-1 pb-16 sm:pb-0">
@@ -32,8 +32,8 @@ export default function RootLayout({
               {children}
             </div>
           </main>
-          <footer className="hidden border-t border-slate-900/60 bg-slate-950/80 sm:block">
-            <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3 text-[11px] text-slate-500">
+          <footer className="hidden border-t border-[#e1d7cb] bg-[#faf8f5] sm:block">
+            <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3 text-[11px] text-[#6d8069]">
               <span>Zero-shot pantry utility.</span>
               <span>
                 Data keys live in your env -- Supabase & OpenAI.

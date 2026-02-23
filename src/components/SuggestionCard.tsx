@@ -167,42 +167,42 @@ export function SuggestionCard({
     <motion.div
       initial={{ opacity: 0, y: 4 }}
       animate={{ opacity: 1, y: 0 }}
-      className="rounded-2xl border border-slate-800/80 bg-slate-900/50 p-4"
+      className="rounded-3xl border border-[#e1d7cb] bg-[#c9b8a0] p-5 shadow-sm"
     >
       {primary ? (
         <>
-          <p className="text-[11px] font-medium uppercase tracking-wider text-slate-400">
+          <p className="text-xs font-semibold uppercase tracking-wider text-[#faf8f5]">
             Suggestion for {dayName}
           </p>
-          <p className="mt-1 text-sm font-medium">
+          <p className="mt-2 text-base font-bold text-[#1a1614]">
             You often cook {primary.recipe.title} on {dayName}s. Want that again?
           </p>
-          <p className="mt-0.5 text-xs text-slate-500">{primary.reason}</p>
-          <div className="mt-3 flex gap-2">
+          <p className="mt-1 text-xs text-[#2a2520]">{primary.reason}</p>
+          <div className="mt-4 flex gap-2">
             <button
               onClick={() => handleLog(primary.recipe.id)}
               disabled={!!loggingId}
-              className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-4 py-2 text-xs font-medium text-emerald-100 transition hover:bg-emerald-500/15 disabled:opacity-50"
+              className="rounded-full bg-[#a8b8a5] px-5 py-2.5 text-sm font-semibold text-[#faf8f5] transition hover:bg-[#8a9e87] disabled:opacity-50"
             >
               {loggingId === primary.recipe.id ? (
-                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                <Loader2 className="h-4 w-4 animate-spin" />
               ) : (
                 "Yes"
               )}
             </button>
             <button
               onClick={() => setExpanded(!expanded)}
-              className="inline-flex items-center gap-1 rounded-full border border-slate-600 bg-slate-800/80 px-4 py-2 text-xs font-medium text-slate-200 transition hover:bg-slate-700/80"
+              className="inline-flex items-center gap-1.5 rounded-full border border-[#e1d7cb] bg-[#faf8f5] px-5 py-2.5 text-sm font-medium text-[#1a1614] transition hover:bg-[#f4e9c8]"
             >
               Show alternatives
               <ChevronDown
-                className={`h-3.5 w-3.5 transition ${expanded ? "rotate-180" : ""}`}
+                className={`h-4 w-4 transition ${expanded ? "rotate-180" : ""}`}
               />
             </button>
           </div>
         </>
       ) : (
-        <p className="text-sm text-slate-500">
+        <p className="text-sm text-[#2a2520]">
           Log a few meals to get personalized suggestions.
         </p>
       )}
@@ -213,24 +213,24 @@ export function SuggestionCard({
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="mt-4 space-y-2 border-t border-slate-800 pt-4"
+            className="mt-4 space-y-2 border-t border-[#e1d7cb] pt-4"
           >
             {alternatives.slice(0, 5).map((alt) => (
               <div
                 key={alt.recipe.id}
-                className="flex items-center justify-between rounded-lg border border-slate-700/60 bg-slate-800/40 px-3 py-2"
+                className="flex items-center justify-between rounded-2xl border border-[#e1d7cb] bg-[#faf8f5] px-4 py-3"
               >
                 <div>
-                  <p className="text-sm font-medium">{alt.recipe.title}</p>
-                  <p className="text-[11px] text-slate-500">{alt.reason}</p>
+                  <p className="text-sm font-semibold text-[#1a1614]">{alt.recipe.title}</p>
+                  <p className="text-xs text-[#6d8069]">{alt.reason}</p>
                 </div>
                 <button
                   onClick={() => handleLog(alt.recipe.id)}
                   disabled={!!loggingId}
-                  className="rounded-full border border-slate-600 bg-slate-700/60 px-3 py-1.5 text-xs font-medium text-slate-200 transition hover:bg-slate-600/80 disabled:opacity-50"
+                  className="rounded-full border border-[#e1d7cb] bg-[#f4e9c8] px-4 py-2 text-xs font-medium text-[#1a1614] transition hover:bg-[#c9b8a0] disabled:opacity-50"
                 >
                   {loggingId === alt.recipe.id ? (
-                    <Loader2 className="h-3 w-3 animate-spin" />
+                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
                   ) : (
                     "Log"
                   )}

@@ -1,8 +1,18 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Warm beige/cream background */
+  --background: #f5f1e8;
+  --foreground: #1a1614;
+  
+  /* Warm color palette inspired by reference */
+  --sage: #a8b8a5;
+  --terracotta: #e07a5f;
+  --warm-yellow: #f4e9c8;
+  --soft-red: #d85a4f;
+  --taupe: #c9b8a0;
+  --warm-white: #faf8f5;
+  --dark-text: #2a2520;
 }
 
 @theme inline {
@@ -10,17 +20,37 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  
+  /* Custom warm color tokens */
+  --color-sage-50: #f2f5f2;
+  --color-sage-100: #e3e9e2;
+  --color-sage-200: #c7d6c5;
+  --color-sage-300: #a8b8a5;
+  --color-sage-400: #8a9e87;
+  --color-sage-500: #6d8069;
+  
+  --color-terracotta-50: #fef5f3;
+  --color-terracotta-100: #fde8e3;
+  --color-terracotta-200: #fbc6ba;
+  --color-terracotta-300: #f49a84;
+  --color-terracotta-400: #e07a5f;
+  --color-terracotta-500: #c95f45;
+  
+  --color-warm-yellow-50: #fefdfb;
+  --color-warm-yellow-100: #fdf9f0;
+  --color-warm-yellow-200: #f9f0da;
+  --color-warm-yellow-300: #f4e9c8;
+  --color-warm-yellow-400: #ecdba8;
+  
+  --color-taupe-50: #f9f7f5;
+  --color-taupe-100: #f0ebe5;
+  --color-taupe-200: #e1d7cb;
+  --color-taupe-300: #c9b8a0;
+  --color-taupe-400: #b4a08a;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), system-ui, sans-serif;
 }
