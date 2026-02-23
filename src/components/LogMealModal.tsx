@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Loader2 } from "lucide-react";
+import { X, Loader2, Plus } from "lucide-react";
 import type { Recipe } from "@/lib/types";
+import { createRecipeManually } from "@/app/actions/create-recipe";
 
 interface LogMealModalProps {
   open: boolean;
@@ -12,6 +13,7 @@ interface LogMealModalProps {
   selectedDate: Date;
   onLog: (recipeId: string, at?: Date, opts?: { note?: string; tags?: string[] }) => Promise<void>;
   onQuickNote: (note: string) => Promise<void>;
+  onRecipeCreated?: () => void;
   preSelectRecipeId?: string | null;
 }
 
@@ -22,14 +24,22 @@ export function LogMealModal({
   selectedDate,
   onLog,
   onQuickNote,
+  onRecipeCreated,
   preSelectRecipeId,
 }: LogMealModalProps) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [mode, setMode] = useState<"pick" | "note">("pick");
+  const [mode, setMode] = useState<"pick" | "create" | "note">("pick");
   const [note, setNote] = useState("");
   const [tags, setTags] = useState<string[]>([]);
   const [search, setSearch] = useState("");
   const [pending, setPending] = useState(false);
+
+  // Create recipe form state
+  const [createTitle, setCreateTitle] = useState("");
+  const [createInstructions, setCreateInstructions] = useState("");
+  const [createIngredients, setCreateIngredients] = useState<
+    Array<{ name: string; qty: string; unit: string; is_essential: boolean }>
+  >([{ name: "", qty: "", unit: "", is_essential: true }]);
 
   const MEAL_TAGS = ["Quick", "Comfort", "Healthy"] as const;
 
@@ -39,11 +49,14 @@ export function LogMealModal({
 
   useEffect(() => {
     if (open) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- Reset form when modal opens
       setSelectedId(preSelectRecipeId ?? null);
       setMode("pick");
       setNote("");
       setTags([]);
+      setSearch("");
+      setCreateTitle("");
+      setCreateInstructions("");
+      setCreateIngredients([{ name: "", qty: "", unit: "", is_essential: true }]);
     }
   }, [open, preSelectRecipeId]);
 
@@ -51,6 +64,27 @@ export function LogMealModal({
     setTags((prev) =>
       prev.includes(t) ? prev.filter((x) => x !== t) : [...prev, t]
     );
+  };
+
+  const addIngredientRow = () => {
+    setCreateIngredients((prev) => [
+      ...prev,
+      { name: "", qty: "", unit: "", is_essential: true },
+    ]);
+  };
+
+  const updateIngredient = (
+    index: number,
+    field: string,
+    value: string | boolean
+  ) => {
+    setCreateIngredients((prev) =>
+      prev.map((ing, i) => (i === index ? { ...ing, [field]: value } : ing))
+    );
+  };
+
+  const removeIngredient = (index: number) => {
+    setCreateIngredients((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleLog = async () => {
@@ -61,10 +95,41 @@ export function LogMealModal({
       setPending(false);
       return;
     }
+    if (mode === "create") {
+      if (!createTitle.trim()) return;
+      setPending(true);
+      const ingredients = createIngredients
+        .filter((i) => i.name.trim())
+        .map((i) => ({
+          name: i.name.trim(),
+          qty: i.qty ? Number(i.qty) || null : null,
+          unit: i.unit.trim() || null,
+          is_essential: i.is_essential,
+        }));
+      const result = await createRecipeManually(
+        createTitle,
+        ingredients,
+        createInstructions
+      );
+      if (result.ok) {
+        // Log the newly created recipe as a meal
+        await onLog(result.id, selectedDate, { tags: tags.length ? tags : undefined });
+        onRecipeCreated?.();
+      }
+      setPending(false);
+      return;
+    }
     if (!selectedId) return;
     setPending(true);
     await onLog(selectedId, selectedDate, { tags: tags.length ? tags : undefined });
     setPending(false);
+  };
+
+  const canSubmit = () => {
+    if (mode === "pick") return !!selectedId;
+    if (mode === "note") return !!note.trim();
+    if (mode === "create") return !!createTitle.trim();
+    return false;
   };
 
   if (!open) return null;
@@ -98,30 +163,31 @@ export function LogMealModal({
           </div>
 
           <div className="max-h-[60vh] overflow-y-auto p-4">
-            <div className="mb-4 flex gap-2">
-              <button
-                onClick={() => setMode("pick")}
-                className={`rounded-full px-3 py-1.5 text-xs font-medium transition ${
-                  mode === "pick"
-                    ? "bg-emerald-500/20 text-emerald-300"
-                    : "bg-slate-800/80 text-slate-400 hover:text-slate-200"
-                }`}
-              >
-                Pick recipe
-              </button>
-              <button
-                onClick={() => setMode("note")}
-                className={`rounded-full px-3 py-1.5 text-xs font-medium transition ${
-                  mode === "note"
-                    ? "bg-emerald-500/20 text-emerald-300"
-                    : "bg-slate-800/80 text-slate-400 hover:text-slate-200"
-                }`}
-              >
-                Quick note
-              </button>
+            {/* Mode tabs */}
+            <div className="mb-4 flex gap-2 overflow-x-auto">
+              {(
+                [
+                  { key: "pick", label: "Pick recipe" },
+                  { key: "create", label: "New recipe" },
+                  { key: "note", label: "Quick note" },
+                ] as const
+              ).map(({ key, label }) => (
+                <button
+                  key={key}
+                  onClick={() => setMode(key)}
+                  className={`whitespace-nowrap rounded-full px-3 py-1.5 text-xs font-medium transition ${
+                    mode === key
+                      ? "bg-emerald-500/20 text-emerald-300"
+                      : "bg-slate-800/80 text-slate-400 hover:text-slate-200"
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
             </div>
 
-            {mode === "pick" ? (
+            {/* Pick recipe mode */}
+            {mode === "pick" && (
               <div className="space-y-3">
                 <p className="mb-2 text-[11px] text-slate-500">
                   For {selectedDate.toLocaleDateString()}
@@ -131,16 +197,16 @@ export function LogMealModal({
                     type="text"
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
-                    placeholder="Search recipes…"
+                    placeholder="Search recipes..."
                     className="w-full rounded-lg border border-slate-700/80 bg-slate-950/80 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 focus:border-emerald-500/50 focus:outline-none"
                   />
                 )}
                 {recipes.length === 0 ? (
                   <p className="text-sm text-slate-500">
-                    No recipes yet. Import one from the Import tab.
+                    No recipes yet. Switch to &quot;New recipe&quot; to create one.
                   </p>
                 ) : (
-                  <ul className="space-y-1">
+                  <ul className="space-y-1 max-h-48 overflow-y-auto">
                     {filteredRecipes.map((r) => (
                       <li key={r.id}>
                         <button
@@ -183,7 +249,106 @@ export function LogMealModal({
                   </div>
                 </div>
               </div>
-            ) : (
+            )}
+
+            {/* Create recipe mode */}
+            {mode === "create" && (
+              <div className="space-y-3">
+                <p className="mb-2 text-[11px] text-slate-500">
+                  Create a new recipe and log it for{" "}
+                  {selectedDate.toLocaleDateString()}
+                </p>
+                <input
+                  type="text"
+                  value={createTitle}
+                  onChange={(e) => setCreateTitle(e.target.value)}
+                  placeholder="Recipe name"
+                  className="w-full rounded-lg border border-slate-700/80 bg-slate-950/80 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 focus:border-emerald-500/50 focus:outline-none"
+                />
+                <div>
+                  <p className="mb-2 text-[11px] font-medium uppercase tracking-wider text-slate-400">
+                    Ingredients
+                  </p>
+                  <div className="space-y-2">
+                    {createIngredients.map((ing, i) => (
+                      <div key={i} className="flex gap-2 items-center">
+                        <input
+                          type="text"
+                          value={ing.name}
+                          onChange={(e) =>
+                            updateIngredient(i, "name", e.target.value)
+                          }
+                          placeholder="Ingredient"
+                          className="flex-1 rounded-lg border border-slate-700/80 bg-slate-950/80 px-2 py-1.5 text-sm text-slate-100 placeholder:text-slate-500 focus:border-emerald-500/50 focus:outline-none"
+                        />
+                        <input
+                          type="text"
+                          value={ing.qty}
+                          onChange={(e) =>
+                            updateIngredient(i, "qty", e.target.value)
+                          }
+                          placeholder="Qty"
+                          className="w-14 rounded-lg border border-slate-700/80 bg-slate-950/80 px-2 py-1.5 text-sm text-slate-100 placeholder:text-slate-500 focus:border-emerald-500/50 focus:outline-none"
+                        />
+                        <input
+                          type="text"
+                          value={ing.unit}
+                          onChange={(e) =>
+                            updateIngredient(i, "unit", e.target.value)
+                          }
+                          placeholder="Unit"
+                          className="w-14 rounded-lg border border-slate-700/80 bg-slate-950/80 px-2 py-1.5 text-sm text-slate-100 placeholder:text-slate-500 focus:border-emerald-500/50 focus:outline-none"
+                        />
+                        {createIngredients.length > 1 && (
+                          <button
+                            onClick={() => removeIngredient(i)}
+                            className="rounded p-1 text-slate-500 hover:text-red-400"
+                          >
+                            <X className="h-3.5 w-3.5" />
+                          </button>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                  <button
+                    onClick={addIngredientRow}
+                    className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-emerald-300/80 transition hover:text-emerald-300"
+                  >
+                    <Plus className="h-3 w-3" />
+                    Add ingredient
+                  </button>
+                </div>
+                <textarea
+                  value={createInstructions}
+                  onChange={(e) => setCreateInstructions(e.target.value)}
+                  placeholder="Instructions (optional)"
+                  rows={2}
+                  className="w-full rounded-lg border border-slate-700/80 bg-slate-950/80 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 focus:border-emerald-500/50 focus:outline-none"
+                />
+                <div>
+                  <p className="mb-2 text-[11px] text-slate-500">Optional tags</p>
+                  <div className="flex gap-2">
+                    {MEAL_TAGS.map((t) => (
+                      <button
+                        key={t}
+                        type="button"
+                        onClick={() => toggleTag(t)}
+                        className={`rounded-full px-3 py-1.5 text-xs font-medium transition ${
+                          tags.includes(t)
+                            ? "bg-emerald-500/20 text-emerald-300"
+                            : "border border-slate-600 bg-slate-800/60 text-slate-400 hover:text-slate-200"
+                        }`}
+                      >
+                        {t}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Quick note mode */}
+            {mode === "note" && (
               <div>
                 <label className="mb-2 block text-[11px] text-slate-500">
                   What did you have?
@@ -202,15 +367,13 @@ export function LogMealModal({
           <div className="border-t border-slate-800 p-4">
             <button
               onClick={handleLog}
-              disabled={
-                pending ||
-                (mode === "pick" && !selectedId) ||
-                (mode === "note" && !note.trim())
-              }
+              disabled={pending || !canSubmit()}
               className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-500/20 py-2.5 text-sm font-medium text-emerald-100 transition hover:bg-emerald-500/30 disabled:opacity-50"
             >
               {pending ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
+              ) : mode === "create" ? (
+                "Save & log meal"
               ) : (
                 "Log meal"
               )}

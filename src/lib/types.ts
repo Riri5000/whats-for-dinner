@@ -36,6 +36,15 @@ export interface MealHistory {
   tags?: MealTag[];
 }
 
+export interface ShoppingListItem {
+  id: string;
+  name: string;
+  qty: string | null;
+  checked: boolean;
+  recipe_id: string | null;
+  added_at: string;
+}
+
 export interface Database {
   public: {
     Tables: {
@@ -53,6 +62,11 @@ export interface Database {
         Row: PantryStaple;
         Insert: Omit<PantryStaple, "id"> & { id?: string };
         Update: Partial<PantryStaple>;
+      };
+      shopping_list_items: {
+        Row: ShoppingListItem;
+        Insert: Omit<ShoppingListItem, "id" | "added_at"> & { id?: string; added_at?: string };
+        Update: Partial<ShoppingListItem>;
       };
     };
   };

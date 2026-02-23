@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useCallback, useEffect } from "react";
-import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { Plus, Sparkles, Pencil } from "lucide-react";
 import { createSupabaseClient } from "@/lib/supabaseClient";
@@ -11,6 +10,7 @@ import { getOrCreateQuickNoteRecipeId } from "@/app/actions/quick-note";
 import { LogMealModal } from "./LogMealModal";
 import { RecipeAdjustModal } from "./RecipeAdjustModal";
 import { SuggestionCard } from "./SuggestionCard";
+import { SurpriseModal } from "./SurpriseModal";
 
 const DAY_NAMES = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
@@ -45,6 +45,13 @@ export function LivingLog() {
   const [adjustRecipe, setAdjustRecipe] = useState<Recipe | null>(null);
   const [toast, setToast] = useState<string | null>(null);
   const [favoritesSearch, setFavoritesSearch] = useState("");
+  const [surpriseOpen, setSurpriseOpen] = useState(false);
+  // Hydration-safe: only render date-dependent calendar on client
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const loadData = useCallback(async () => {
     const supabase = createSupabaseClient();
@@ -76,7 +83,6 @@ export function LivingLog() {
   }, []);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- Data-fetch on mount
     loadData();
   }, [loadData]);
 
@@ -188,48 +194,52 @@ export function LivingLog() {
             className="inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-4 py-2 text-xs font-medium text-emerald-100 transition hover:bg-emerald-500/15"
           >
             <Plus className="h-3.5 w-3.5" />
-            Log tonight&apos;s dinner
+            <span className="hidden sm:inline">{"Log tonight's dinner"}</span>
+            <span className="sm:hidden">Log dinner</span>
           </button>
         </div>
 
-        <div className="flex gap-2 overflow-x-auto pb-2">
-          {days.map((d) => {
-            const key = toDateKey(d);
-            const dayMeals = mealsByDate.get(key) ?? [];
-            const active = key === selectedKey;
-            return (
-              <button
-                key={key}
-                onClick={() => setSelectedDate(d)}
-                className={`flex min-w-[4rem] flex-col items-center rounded-xl border px-3 py-2 text-center transition ${
-                  active
-                    ? "border-emerald-500/50 bg-emerald-500/10"
-                    : "border-slate-700/80 bg-slate-900/50 hover:bg-slate-800/50"
-                }`}
-              >
-                <span className="text-[10px] text-slate-500">
-                  {DAY_NAMES[d.getDay()]}
-                </span>
-                <span className="text-sm font-medium">{d.getDate()}</span>
-                {dayMeals.length > 0 && (
-                  <span className="mt-0.5 text-[10px] text-emerald-400">
-                    {dayMeals.length} meal{dayMeals.length !== 1 ? "s" : ""}
+        {/* Calendar strip -- only render on client to avoid hydration mismatch with day names */}
+        {mounted && (
+          <div className="flex gap-2 overflow-x-auto pb-2">
+            {days.map((d) => {
+              const key = toDateKey(d);
+              const dayMeals = mealsByDate.get(key) ?? [];
+              const active = key === selectedKey;
+              return (
+                <button
+                  key={key}
+                  onClick={() => setSelectedDate(d)}
+                  className={`flex min-w-[4rem] flex-col items-center rounded-xl border px-3 py-2 text-center transition ${
+                    active
+                      ? "border-emerald-500/50 bg-emerald-500/10"
+                      : "border-slate-700/80 bg-slate-900/50 hover:bg-slate-800/50"
+                  }`}
+                >
+                  <span className="text-[10px] text-slate-500">
+                    {DAY_NAMES[d.getDay()]}
                   </span>
-                )}
-              </button>
-            );
-          })}
-        </div>
+                  <span className="text-sm font-medium">{d.getDate()}</span>
+                  {dayMeals.length > 0 && (
+                    <span className="mt-0.5 text-[10px] text-emerald-400">
+                      {dayMeals.length} meal{dayMeals.length !== 1 ? "s" : ""}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        )}
 
         <div className="rounded-2xl border border-slate-800/80 bg-slate-900/50 p-4">
           <p className="mb-3 text-[11px] font-medium uppercase tracking-wider text-slate-400">
             {isToday ? "Today" : selectedDate.toLocaleDateString()} — meals
           </p>
           {loading ? (
-            <p className="text-sm text-slate-400">Loading…</p>
+            <p className="text-sm text-slate-400">Loading...</p>
           ) : selectedMeals.length === 0 ? (
             <p className="text-sm text-slate-500">
-              No meals logged. Tap &quot;Log tonight&apos;s dinner&quot; to add one.
+              No meals logged. Tap &quot;Log dinner&quot; to add one.
             </p>
           ) : (
             <ul className="space-y-2">
@@ -308,7 +318,7 @@ export function LivingLog() {
                 type="text"
                 value={favoritesSearch}
                 onChange={(e) => setFavoritesSearch(e.target.value)}
-                placeholder="Search…"
+                placeholder="Search..."
                 className="w-24 rounded border border-slate-700/80 bg-slate-900/80 px-2 py-1 text-xs text-slate-200 placeholder:text-slate-500 focus:border-emerald-500/50 focus:outline-none"
               />
             </div>
@@ -331,14 +341,15 @@ export function LivingLog() {
         )}
       </div>
 
-      <div className="flex justify-center">
-        <Link
-          href="/surprise"
-          className="inline-flex items-center gap-2 rounded-full border border-slate-600 bg-slate-800/60 px-4 py-2 text-xs font-medium text-slate-300 transition hover:bg-slate-700/60"
+      {/* "I don't know what to make" button - replaces surprise page link */}
+      <div className="flex justify-center pb-16 sm:pb-0">
+        <button
+          onClick={() => setSurpriseOpen(true)}
+          className="inline-flex items-center gap-2 rounded-full border border-slate-600 bg-slate-800/60 px-5 py-2.5 text-xs font-medium text-slate-300 transition hover:bg-slate-700/60 hover:text-slate-100"
         >
           <Sparkles className="h-3.5 w-3.5" />
-          Surprise me
-        </Link>
+          {"I don't know what to make"}
+        </button>
       </div>
 
       <LogMealModal
@@ -351,7 +362,13 @@ export function LivingLog() {
         selectedDate={selectedDate}
         onLog={handleLogMeal}
         onQuickNote={handleQuickNote}
+        onRecipeCreated={loadData}
         preSelectRecipeId={logModalPreselectId ?? lastSameWeekday?.recipe_id}
+      />
+
+      <SurpriseModal
+        open={surpriseOpen}
+        onClose={() => setSurpriseOpen(false)}
       />
 
       {adjustRecipe && (
@@ -373,7 +390,7 @@ export function LivingLog() {
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 8 }}
-            className="fixed bottom-6 left-1/2 -translate-x-1/2 rounded-full border border-slate-600 bg-slate-800 px-4 py-2 text-xs font-medium text-slate-200 shadow-lg"
+            className="fixed bottom-20 left-1/2 z-50 -translate-x-1/2 rounded-full border border-slate-600 bg-slate-800 px-4 py-2 text-xs font-medium text-slate-200 shadow-lg sm:bottom-6"
           >
             {toast}
           </motion.div>
