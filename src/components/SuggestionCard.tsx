@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, Loader2 } from "lucide-react";
 import type { Recipe, MealHistory, PantryStaple } from "@/lib/types";
@@ -40,6 +40,11 @@ export function SuggestionCard({
 }: SuggestionCardProps) {
   const [expanded, setExpanded] = useState(false);
   const [loggingId, setLoggingId] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const suggestion = useMemo(() => {
     const dow = selectedDate.getDay();
@@ -155,7 +160,7 @@ export function SuggestionCard({
   if (!suggestion.primary && suggestion.alternatives.length === 0) return null;
 
   const { primary, alternatives } = suggestion;
-  const dow = selectedDate.getDay();
+  const dow = mounted ? selectedDate.getDay() : 0;
   const dayName = DAY_NAMES[dow];
 
   return (
