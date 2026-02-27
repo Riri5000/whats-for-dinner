@@ -3,14 +3,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
 
 :root {
-  /* Clean light color scheme */
   --background: #ffffff;
   --foreground: #1a1a1a;
-  
-  /* Primary green accent */
   --primary: #4CAF50;
-  
-  /* Semantic colors */
   --neutral-light: #F5F5F5;
   --border: #e0e0e0;
   --text-secondary: #666666;
