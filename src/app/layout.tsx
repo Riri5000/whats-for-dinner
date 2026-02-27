@@ -1,7 +1,14 @@
 import type { Metadata, Viewport } from "next";
+import { Eb_Garamond } from "next/font/google";
 import "./globals.css";
 import { AppHeader } from "@/components/AppHeader";
 import { BottomNav } from "@/components/BottomNav";
+
+const ebGaramond = Eb_Garamond({
+  subsets: ["latin"],
+  variable: "--font-display",
+  weight: ["400", "500", "600", "700"],
+});
 
 export const metadata: Metadata = {
   title: "What's with Dinner",
@@ -23,7 +30,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className={ebGaramond.variable}>
+      <head>
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        />
+      </head>
       <body className="antialiased bg-white text-slate-900">
         <div className="flex min-h-screen flex-col">
           <AppHeader />
@@ -46,3 +59,4 @@ export default function RootLayout({
     </html>
   );
 }
+
