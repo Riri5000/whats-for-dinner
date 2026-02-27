@@ -171,10 +171,10 @@ export function SuggestionCard({
     >
       {primary ? (
         <>
-          <p className="text-xs font-semibold uppercase tracking-wider text-[#faf8f5]">
+          <p className="text-xs font-semibold uppercase tracking-wider text-[#faf8f5]" suppressHydrationWarning>
             Suggestion for {dayName}
           </p>
-          <p className="mt-2 text-base font-bold text-[#1a1614]">
+          <p className="mt-2 text-base font-bold text-[#1a1614]" suppressHydrationWarning>
             You often cook {primary.recipe.title} on {dayName}s. Want that again?
           </p>
           <p className="mt-1 text-xs text-[#2a2520]">{primary.reason}</p>

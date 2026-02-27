@@ -216,7 +216,7 @@ export function LivingLog() {
       {/* Meals for selected date */}
       <div className="mb-8">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-display font-bold">
+          <h2 className="text-lg font-display font-bold" suppressHydrationWarning>
             {isToday ? "Today's Meals" : selectedDate.toLocaleDateString()}
           </h2>
           <button
