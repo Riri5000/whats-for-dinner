@@ -1,52 +1,28 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-
-const NAV_ITEMS = [
-  { href: "/", label: "Log" },
-  { href: "/recipes", label: "Recipes" },
-  { href: "/shopping-list", label: "Shopping List" },
-  { href: "/stock-up", label: "Stock Up" },
-] as const;
 
 export function AppHeader() {
-  const pathname = usePathname();
-
   return (
-    <header className="border-b border-[#e1d7cb] bg-[#faf8f5] backdrop-blur">
-      <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-4">
-        <Link href="/" className="flex items-center gap-2">
-          <span className="inline-flex h-8 w-8 items-center justify-center rounded-xl bg-[#a8b8a5] text-[#faf8f5] text-lg font-bold">
-            W
-          </span>
-          <div className="flex flex-col leading-tight">
-            <span className="text-sm font-semibold tracking-tight text-[#1a1614]">
-              What&apos;s with Dinner
+    <header className="sticky top-0 z-50 border-b border-slate-100 bg-white/90 backdrop-blur-md">
+      <div className="flex items-center justify-between px-4 h-16">
+        <Link href="/" className="flex items-center gap-3">
+          <div className="h-10 w-10 rounded-full bg-[#4CAF50]/10 flex items-center justify-center">
+            <span className="material-symbols-outlined text-[#4CAF50] text-[24px]" style={{ fontVariationSettings: "'FILL' 1" }}>
+              restaurant_menu
             </span>
-            <span className="hidden text-[11px] text-[#6d8069] sm:block">
-              Inventory-free meal decisions
+          </div>
+          <div className="hidden sm:flex flex-col leading-tight">
+            <span className="text-sm font-bold tracking-tight text-slate-900">
+              LivingLog
             </span>
           </div>
         </Link>
-        <nav className="hidden gap-2 text-xs font-medium sm:flex">
-          {NAV_ITEMS.map(({ href, label }) => {
-            const active = href === "/" ? pathname === "/" : pathname.startsWith(href);
-            return (
-              <Link
-                key={href}
-                href={href}
-                className={`rounded-full px-3 py-1.5 transition ${
-                  active
-                    ? "bg-[#a8b8a5] text-[#faf8f5]"
-                    : "text-[#6d8069] hover:bg-[#f4e9c8] hover:text-[#1a1614]"
-                }`}
-              >
-                {label}
-              </Link>
-            );
-          })}
-        </nav>
+        <div className="flex items-center gap-2">
+          <button className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-slate-100 transition-colors">
+            <span className="material-symbols-outlined text-slate-600 text-[24px]">notifications</span>
+          </button>
+        </div>
       </div>
     </header>
   );

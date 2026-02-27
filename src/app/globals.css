@@ -1,56 +1,51 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Eb+Garamond:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
 
 :root {
-  /* Warm beige/cream background */
-  --background: #f5f1e8;
-  --foreground: #1a1614;
+  /* Clean light color scheme */
+  --background: #ffffff;
+  --foreground: #1a1a1a;
   
-  /* Warm color palette inspired by reference */
-  --sage: #a8b8a5;
-  --terracotta: #e07a5f;
-  --warm-yellow: #f4e9c8;
-  --soft-red: #d85a4f;
-  --taupe: #c9b8a0;
-  --warm-white: #faf8f5;
-  --dark-text: #2a2520;
+  /* Primary green accent */
+  --primary: #4CAF50;
+  
+  /* Semantic colors */
+  --neutral-light: #F5F5F5;
+  --border: #e0e0e0;
+  --text-secondary: #666666;
+  --alert-red: #f44336;
+  --alert-orange: #ff9800;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --font-display: ["Eb Garamond", serif];
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
   
-  /* Custom warm color tokens */
-  --color-sage-50: #f2f5f2;
-  --color-sage-100: #e3e9e2;
-  --color-sage-200: #c7d6c5;
-  --color-sage-300: #a8b8a5;
-  --color-sage-400: #8a9e87;
-  --color-sage-500: #6d8069;
+  --color-primary-50: #f1f8f5;
+  --color-primary-100: #e0f2f0;
+  --color-primary-500: #4CAF50;
+  --color-primary-600: #388e3c;
   
-  --color-terracotta-50: #fef5f3;
-  --color-terracotta-100: #fde8e3;
-  --color-terracotta-200: #fbc6ba;
-  --color-terracotta-300: #f49a84;
-  --color-terracotta-400: #e07a5f;
-  --color-terracotta-500: #c95f45;
+  --color-red-400: #f44336;
+  --color-red-500: #d32f2f;
   
-  --color-warm-yellow-50: #fefdfb;
-  --color-warm-yellow-100: #fdf9f0;
-  --color-warm-yellow-200: #f9f0da;
-  --color-warm-yellow-300: #f4e9c8;
-  --color-warm-yellow-400: #ecdba8;
-  
-  --color-taupe-50: #f9f7f5;
-  --color-taupe-100: #f0ebe5;
-  --color-taupe-200: #e1d7cb;
-  --color-taupe-300: #c9b8a0;
-  --color-taupe-400: #b4a08a;
+  --color-orange-400: #ff9800;
+  --color-orange-500: #f57c00;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), system-ui, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: 600;
 }

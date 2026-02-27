@@ -156,56 +156,51 @@ export default function RecipesPage() {
   };
 
   return (
-    <div className="flex flex-1 flex-col gap-6 py-2">
+    <div className="flex flex-1 flex-col pb-20 px-4 sm:px-0">
       {/* Header */}
-      <section className="flex flex-col gap-3 rounded-2xl border border-slate-800/80 bg-slate-950/80 px-4 py-4 sm:px-6 sm:py-6">
-        <div className="flex items-center gap-3">
-          <BookOpen className="h-5 w-5 text-emerald-400" />
-          <div>
-            <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-emerald-300/80">
-              Recipe Book
-            </p>
-            <h1 className="text-xl font-semibold tracking-tight sm:text-2xl">
-              All Recipes
-            </h1>
-          </div>
+      <div className="sticky top-16 z-40 -mx-4 sm:mx-0 px-4 sm:px-0 py-6 bg-white border-b border-slate-100">
+        <div className="flex items-center justify-between">
+          <h1 className="text-2xl font-display font-bold">Recipe Library</h1>
+          <button className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-slate-100">
+            <span className="material-symbols-outlined text-green-600">favorite</span>
+          </button>
         </div>
-      </section>
+      </div>
 
-      {/* Search and actions */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search recipes..."
-            className="w-full rounded-xl border border-slate-700/80 bg-slate-950/80 py-2.5 pl-10 pr-4 text-sm text-slate-100 placeholder:text-slate-500 focus:border-emerald-500/50 focus:outline-none"
-          />
-        </div>
-        <div className="flex gap-2">
-          <button
-            onClick={() => {
-              setShowCreate(!showCreate);
-              setShowImport(false);
-            }}
-            className="inline-flex items-center gap-1.5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-2.5 text-xs font-medium text-emerald-100 transition hover:bg-emerald-500/15"
-          >
-            <Plus className="h-3.5 w-3.5" />
-            New Recipe
-          </button>
-          <button
-            onClick={() => {
-              setShowImport(!showImport);
-              setShowCreate(false);
-            }}
-            className="inline-flex items-center gap-1.5 rounded-xl border border-slate-600 bg-slate-800/80 px-4 py-2.5 text-xs font-medium text-slate-200 transition hover:bg-slate-700/80"
-          >
-            <LinkIcon className="h-3.5 w-3.5" />
-            Import URL
-          </button>
-        </div>
+      {/* Search */}
+      <div className="mt-6 mb-6 relative">
+        <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">search</span>
+        <input
+          type="text"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search saved recipes..."
+          className="w-full rounded-full bg-slate-100 py-3 pl-12 pr-4 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-green-500"
+        />
+      </div>
+
+      {/* Actions */}
+      <div className="flex gap-3 mb-8">
+        <button
+          onClick={() => {
+            setShowCreate(!showCreate);
+            setShowImport(false);
+          }}
+          className="flex items-center justify-center gap-2 flex-1 bg-green-600 text-white text-sm font-bold py-3 px-4 rounded-full hover:bg-green-700 transition-all"
+        >
+          <span className="material-symbols-outlined">add</span>
+          Manual Entry
+        </button>
+        <button
+          onClick={() => {
+            setShowImport(!showImport);
+            setShowCreate(false);
+          }}
+          className="flex items-center justify-center gap-2 flex-1 bg-green-600 text-white text-sm font-bold py-3 px-4 rounded-full hover:bg-green-700 transition-all"
+        >
+          <span className="material-symbols-outlined">link</span>
+          Import URL
+        </button>
       </div>
 
       {/* Import from URL panel */}
@@ -215,48 +210,44 @@ export default function RecipesPage() {
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="overflow-hidden"
+            className="overflow-hidden mb-6"
           >
-            <div className="rounded-2xl border border-slate-800/80 bg-slate-900/50 p-4">
+            <div className="rounded-2xl bg-slate-50 border border-slate-200 p-4">
               <div className="flex items-center justify-between mb-3">
-                <p className="text-sm font-medium text-slate-200">
+                <p className="text-sm font-medium text-slate-900">
                   Import from URL
                 </p>
                 <button
                   onClick={() => setShowImport(false)}
-                  className="rounded p-1 text-slate-400 hover:bg-slate-800 hover:text-slate-200"
+                  className="rounded p-1 text-slate-400 hover:bg-white hover:text-slate-600"
                 >
-                  <X className="h-4 w-4" />
+                  <span className="material-symbols-outlined">close</span>
                 </button>
               </div>
-              <div className="flex gap-2">
+              <div className="flex gap-2 mb-3">
                 <input
                   type="url"
                   value={importUrl}
                   onChange={(e) => setImportUrl(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && handleImportUrl()}
                   placeholder="Paste a recipe URL..."
-                  className="flex-1 rounded-lg border border-slate-700/80 bg-slate-950/80 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 focus:border-emerald-500/50 focus:outline-none"
+                  className="flex-1 rounded-lg bg-white border border-slate-200 px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-green-500"
                 />
                 <button
                   onClick={handleImportUrl}
                   disabled={importLoading || !importUrl.trim()}
-                  className="inline-flex items-center gap-1.5 rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-4 py-2 text-xs font-medium text-emerald-100 transition hover:bg-emerald-500/15 disabled:opacity-50"
+                  className="inline-flex items-center justify-center gap-2 rounded-lg bg-green-600 text-white px-4 py-2 text-xs font-medium hover:bg-green-700 disabled:opacity-50"
                 >
                   {importLoading ? (
-                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                    <span className="inline-block h-3 w-3 animate-spin border-2 border-white border-t-transparent rounded-full"></span>
                   ) : (
                     "Import"
                   )}
                 </button>
               </div>
               {importError && (
-                <p className="mt-2 text-xs text-red-400">{importError}</p>
+                <p className="text-xs text-red-600 mb-2">{importError}</p>
               )}
-              <p className="mt-2 text-[11px] text-slate-500">
-                Paste a recipe URL and we will use AI to extract the title,
-                ingredients, and instructions.
-              </p>
             </div>
           </motion.div>
         )}
@@ -269,18 +260,18 @@ export default function RecipesPage() {
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="overflow-hidden"
+            className="overflow-hidden mb-6"
           >
-            <div className="rounded-2xl border border-slate-800/80 bg-slate-900/50 p-4">
+            <div className="rounded-2xl bg-slate-50 border border-slate-200 p-4">
               <div className="flex items-center justify-between mb-3">
-                <p className="text-sm font-medium text-slate-200">
+                <p className="text-sm font-medium text-slate-900">
                   Create New Recipe
                 </p>
                 <button
                   onClick={() => setShowCreate(false)}
-                  className="rounded p-1 text-slate-400 hover:bg-slate-800 hover:text-slate-200"
+                  className="rounded p-1 text-slate-400 hover:bg-white hover:text-slate-600"
                 >
-                  <X className="h-4 w-4" />
+                  <span className="material-symbols-outlined">close</span>
                 </button>
               </div>
               <div className="space-y-3">
@@ -289,10 +280,10 @@ export default function RecipesPage() {
                   value={createTitle}
                   onChange={(e) => setCreateTitle(e.target.value)}
                   placeholder="Recipe name"
-                  className="w-full rounded-lg border border-slate-700/80 bg-slate-950/80 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 focus:border-emerald-500/50 focus:outline-none"
+                  className="w-full rounded-lg bg-white border border-slate-200 px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-green-500"
                 />
                 <div>
-                  <p className="mb-2 text-[11px] font-medium uppercase tracking-wider text-slate-400">
+                  <p className="mb-2 text-[11px] font-medium uppercase tracking-wider text-slate-600">
                     Ingredients
                   </p>
                   <div className="space-y-2">
@@ -305,7 +296,7 @@ export default function RecipesPage() {
                             updateIngredient(i, "name", e.target.value)
                           }
                           placeholder="Ingredient"
-                          className="flex-1 rounded-lg border border-slate-700/80 bg-slate-950/80 px-3 py-1.5 text-sm text-slate-100 placeholder:text-slate-500 focus:border-emerald-500/50 focus:outline-none"
+                          className="flex-1 rounded-lg bg-white border border-slate-200 px-3 py-1.5 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-green-500"
                         />
                         <input
                           type="text"
@@ -314,7 +305,7 @@ export default function RecipesPage() {
                             updateIngredient(i, "qty", e.target.value)
                           }
                           placeholder="Qty"
-                          className="w-16 rounded-lg border border-slate-700/80 bg-slate-950/80 px-2 py-1.5 text-sm text-slate-100 placeholder:text-slate-500 focus:border-emerald-500/50 focus:outline-none"
+                          className="w-16 rounded-lg bg-white border border-slate-200 px-2 py-1.5 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-green-500"
                         />
                         <input
                           type="text"
@@ -323,14 +314,14 @@ export default function RecipesPage() {
                             updateIngredient(i, "unit", e.target.value)
                           }
                           placeholder="Unit"
-                          className="w-16 rounded-lg border border-slate-700/80 bg-slate-950/80 px-2 py-1.5 text-sm text-slate-100 placeholder:text-slate-500 focus:border-emerald-500/50 focus:outline-none"
+                          className="w-16 rounded-lg bg-white border border-slate-200 px-2 py-1.5 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-green-500"
                         />
                         {createIngredients.length > 1 && (
                           <button
                             onClick={() => removeIngredient(i)}
-                            className="rounded p-1 text-slate-500 hover:text-red-400"
+                            className="rounded p-1 text-slate-400 hover:text-red-600"
                           >
-                            <X className="h-3.5 w-3.5" />
+                            <span className="material-symbols-outlined text-lg">close</span>
                           </button>
                         )}
                       </div>
@@ -338,7 +329,7 @@ export default function RecipesPage() {
                   </div>
                   <button
                     onClick={addIngredientRow}
-                    className="mt-2 text-xs font-medium text-emerald-300/80 transition hover:text-emerald-300"
+                    className="mt-2 text-xs font-medium text-green-600 hover:text-green-700"
                   >
                     + Add ingredient
                   </button>
@@ -348,15 +339,15 @@ export default function RecipesPage() {
                   onChange={(e) => setCreateInstructions(e.target.value)}
                   placeholder="Instructions (optional)"
                   rows={3}
-                  className="w-full rounded-lg border border-slate-700/80 bg-slate-950/80 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 focus:border-emerald-500/50 focus:outline-none"
+                  className="w-full rounded-lg bg-white border border-slate-200 px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-green-500"
                 />
                 <button
                   onClick={handleCreateRecipe}
                   disabled={createLoading || !createTitle.trim()}
-                  className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-500/20 py-2.5 text-sm font-medium text-emerald-100 transition hover:bg-emerald-500/30 disabled:opacity-50"
+                  className="flex w-full items-center justify-center gap-2 rounded-lg bg-green-600 text-white py-2.5 text-sm font-medium hover:bg-green-700 disabled:opacity-50"
                 >
                   {createLoading ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <span className="inline-block h-4 w-4 animate-spin border-2 border-white border-t-transparent rounded-full"></span>
                   ) : (
                     "Save Recipe"
                   )}
