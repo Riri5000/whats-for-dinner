@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import "./globals.css";
+import BottomNav from "@/components/BottomNav";
 
 export const metadata: Metadata = {
   title: "What's with Dinner",
@@ -34,6 +35,7 @@ export default function RootLayout({
                   </span>
                 </div>
               </Link>
+              {/* Desktop nav — hidden on mobile, shown on sm+ */}
               <nav className="hidden gap-2 text-xs font-medium text-slate-300 sm:flex">
                 <Link
                   href="/"
@@ -62,15 +64,17 @@ export default function RootLayout({
               </nav>
             </div>
           </header>
-          <main className="flex-1">
+          <main className="flex-1 pb-20 sm:pb-0">
             <div className="mx-auto flex max-w-5xl flex-1 flex-col px-4 py-6">
               {children}
             </div>
           </main>
-          <footer className="border-t border-slate-900/60 bg-slate-950/80">
+          {/* Bottom nav — mobile only */}
+          <BottomNav />
+          <footer className="hidden border-t border-slate-900/60 bg-slate-950/80 sm:block">
             <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3 text-[11px] text-slate-500">
               <span>Zero-shot pantry utility.</span>
-              <span className="hidden sm:inline">
+              <span>
                 Data keys live in your env – Supabase & OpenAI.
               </span>
             </div>
