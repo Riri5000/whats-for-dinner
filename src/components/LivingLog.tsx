@@ -31,11 +31,15 @@ function getDaysAroundToday(radius: number): Date[] {
 }
 
 export function LivingLog() {
-  const [selectedDate, setSelectedDate] = useState<Date>(() => {
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [days, setDays] = useState<Date[]>([]);
+
+  useEffect(() => {
     const d = new Date();
     d.setHours(0, 0, 0, 0);
-    return d;
-  });
+    setSelectedDate(d);
+    setDays(getDaysAroundToday(7));
+  }, []);
   const [meals, setMeals] = useState<Array<MealHistory & { recipe?: Recipe }>>([]);
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [staples, setStaples] = useState<PantryStaple[]>([]);
@@ -87,10 +91,10 @@ export function LivingLog() {
     mealsByDate.get(key)!.push(m);
   }
 
-  const days = getDaysAroundToday(7);
-  const selectedKey = toDateKey(selectedDate);
-  const selectedMeals = mealsByDate.get(selectedKey) ?? [];
-  const isToday = toDateKey(selectedDate) === toDateKey(new Date());
+  const today = new Date();
+  const selectedKey = selectedDate ? toDateKey(selectedDate) : "";
+  const selectedMeals = selectedKey ? (mealsByDate.get(selectedKey) ?? []) : [];
+  const isToday = selectedDate ? toDateKey(selectedDate) === toDateKey(today) : false;
 
   const openLogModal = (preselectId?: string) => {
     setLogModalPreselectId(preselectId ?? null);
@@ -102,12 +106,13 @@ export function LivingLog() {
     at?: Date,
     opts?: { note?: string; tags?: string[] }
   ) => {
-    const result = await logMealAsConsumed(recipeId, at ?? selectedDate, opts);
+    const date = at ?? selectedDate ?? new Date();
+    const result = await logMealAsConsumed(recipeId, date, opts);
     if (result.ok) {
       setLogModalOpen(false);
       setLogModalPreselectId(null);
       await loadData();
-      setToast("Logged for " + (isToday ? "today" : selectedDate.toLocaleDateString()));
+      setToast("Logged for " + (isToday ? "today" : date.toLocaleDateString()));
       setTimeout(() => setToast(null), 2500);
     }
   };
@@ -119,6 +124,7 @@ export function LivingLog() {
   };
 
   const handleReuseLastWeekday = async () => {
+    if (!selectedDate) return;
     const targetDow = selectedDate.getDay();
     const cutoff = new Date(selectedDate);
     cutoff.setMonth(cutoff.getMonth() - 2);
@@ -132,6 +138,7 @@ export function LivingLog() {
   };
 
   const lastSameWeekday = (() => {
+    if (!selectedDate) return undefined;
     const targetDow = selectedDate.getDay();
     return meals.find(
       (m) =>
@@ -171,7 +178,7 @@ export function LivingLog() {
       </section>
 
       <SuggestionCard
-        selectedDate={selectedDate}
+        selectedDate={selectedDate ?? new Date()}
         meals={meals}
         recipes={recipes}
         staples={staples}
@@ -223,7 +230,7 @@ export function LivingLog() {
 
         <div className="rounded-2xl border border-slate-800/80 bg-slate-900/50 p-4">
           <p className="mb-3 text-[11px] font-medium uppercase tracking-wider text-slate-400">
-            {isToday ? "Today" : selectedDate.toLocaleDateString()} — meals
+            {isToday ? "Today" : selectedDate?.toLocaleDateString()} — meals
           </p>
           {loading ? (
             <p className="text-sm text-slate-400">Loading…</p>
@@ -280,7 +287,7 @@ export function LivingLog() {
                 onClick={handleReuseLastWeekday}
                 className="rounded-full border border-slate-600 bg-slate-800/80 px-3 py-1.5 text-xs font-medium text-slate-200 transition hover:bg-slate-700/80"
               >
-                Reuse last {DAY_NAMES[selectedDate.getDay()]}&apos;s meal
+                Reuse last {selectedDate ? DAY_NAMES[selectedDate.getDay()] : ""}&apos;s meal
               </button>
             )}
             <button
@@ -348,7 +355,7 @@ export function LivingLog() {
           setLogModalPreselectId(null);
         }}
         recipes={recipes}
-        selectedDate={selectedDate}
+        selectedDate={selectedDate ?? new Date()}
         onLog={handleLogMeal}
         onQuickNote={handleQuickNote}
         preSelectRecipeId={logModalPreselectId ?? lastSameWeekday?.recipe_id}
