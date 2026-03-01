@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import { ShoppingCart, ArrowLeft, Package, AlertCircle, Check } from "lucide-react";
 import { createSupabaseClient } from "@/lib/supabaseClient";
 import type { PantryStaple } from "@/lib/types";
 import { markStapleAsStocked } from "@/app/actions/pantry";
@@ -27,6 +28,7 @@ export default function StockUpPage() {
   }, []);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- Data-fetch on mount
     loadData();
   }, [loadData]);
 
@@ -39,144 +41,132 @@ export default function StockUpPage() {
 
   const low = items.filter((i) => i.status === "Low");
   const out = items.filter((i) => i.status === "Out");
-  const lowCount = low.length;
-  const outCount = out.length;
 
   return (
-    <div className="flex flex-1 flex-col pb-20 px-4 sm:px-0">
-      {/* Header */}
-      <div className="sticky top-16 z-40 -mx-4 sm:mx-0 px-4 sm:px-0 py-6 bg-white border-b border-slate-100">
-        <div className="flex items-center justify-between mb-4">
-          <h1 className="text-2xl font-display font-bold">Stock Up</h1>
-          <button className="flex items-center justify-center w-8 h-8 rounded-full hover:bg-slate-100">
-            <span className="material-symbols-outlined text-slate-700">search</span>
-          </button>
+    <div className="flex flex-1 flex-col gap-6 py-2">
+      <section className="flex flex-col gap-4 rounded-2xl border border-slate-800/80 bg-slate-950/80 px-4 py-4 sm:px-6 sm:py-6">
+        <div className="flex items-center gap-3">
+          <Link
+            href="/"
+            className="rounded-full border border-slate-700/80 p-2 text-slate-400 transition hover:bg-slate-800/80 hover:text-slate-200"
+            aria-label="Back to dashboard"
+          >
+            <ArrowLeft className="h-4 w-4" />
+          </Link>
+          <div>
+            <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-emerald-300/80">
+              Stock Up
+            </p>
+            <h1 className="text-xl font-semibold tracking-tight sm:text-2xl">
+              Low or out — restock list
+            </h1>
+            <p className="text-xs text-slate-400">
+              Sorted by how heavily you rely on each staple. Tap &quot;Got it&quot; when restocked.
+            </p>
+          </div>
         </div>
-      </div>
+      </section>
 
-      {/* Pantry Status Card */}
-      <div className="mt-6 mb-8 rounded-2xl bg-green-50 border border-green-100 p-6 flex flex-col items-center text-center">
-        <div className="w-14 h-14 bg-white rounded-full flex items-center justify-center mb-4 shadow-sm">
-          <span className="material-symbols-outlined text-green-600 text-3xl" style={{ fontVariationSettings: "'FILL' 1" }}>
-            inventory_2
-          </span>
-        </div>
-        <h2 className="text-xl font-display font-bold text-slate-900 mb-2">Pantry Status</h2>
-        <p className="text-sm text-slate-600 leading-relaxed max-w-xs">
-          You're running low on <span className="font-bold text-green-600">{lowCount + outCount} essential items</span> needed for this week's meal plan.
-        </p>
-      </div>
+      <div className="flex flex-col gap-6">
+        {loading && (
+          <p className="text-sm text-slate-400">Loading…</p>
+        )}
+        {error && (
+          <p className="text-sm text-amber-400">{error}</p>
+        )}
+        {!loading && !error && items.length === 0 && (
+          <div className="rounded-2xl border border-slate-800/80 bg-slate-900/50 p-8 text-center">
+            <Package className="mx-auto h-10 w-10 text-slate-500" />
+            <p className="mt-2 text-sm font-medium text-slate-300">Nothing to restock</p>
+            <p className="mt-1 text-xs text-slate-500">
+              When staples hit Low or Out, they’ll show here.
+            </p>
+          </div>
+        )}
 
-      {/* Content */}
-      {loading && (
-        <div className="text-center py-8">
-          <p className="text-slate-500">Loading…</p>
-        </div>
-      )}
-
-      {error && (
-        <div className="rounded-lg bg-red-50 p-4 text-sm text-red-600">
-          {error}
-        </div>
-      )}
-
-      {!loading && !error && items.length === 0 && (
-        <div className="rounded-2xl bg-slate-50 p-8 text-center">
-          <span className="material-symbols-outlined text-slate-400 text-4xl mx-auto block mb-2">
-            inventory_2
-          </span>
-          <p className="text-sm font-medium text-slate-700">All stocked up!</p>
-          <p className="text-xs text-slate-500 mt-1">
-            When staples hit Low or Out, they'll show here.
-          </p>
-        </div>
-      )}
-
-      {!loading && items.length > 0 && (
-        <div className="space-y-8 pb-8">
-          {/* Out (Critical) Section */}
-          {out.length > 0 && (
-            <section className="space-y-3">
-              <div className="flex items-center justify-between px-1">
-                <h3 className="text-xs font-bold text-red-500 flex items-center gap-2 uppercase tracking-widest">
-                  <span className="w-1.5 h-1.5 rounded-full bg-red-500"></span>
-                  Out (Critical)
-                </h3>
-                <span className="text-[10px] font-bold bg-red-50 text-red-500 px-2 py-0.5 rounded-full uppercase">{outCount} items</span>
-              </div>
-              <div className="space-y-2">
-                {out.map((i) => (
-                  <div key={i.id} className="bg-slate-50 rounded-xl p-4 flex items-center justify-between">
-                    <div className="flex items-center gap-4 flex-1 min-w-0">
-                      <div className="h-10 w-10 rounded-full bg-white flex items-center justify-center text-red-400 shrink-0">
-                        <span className="material-symbols-outlined text-xl">warning</span>
-                      </div>
-                      <div className="min-w-0">
-                        <p className="font-bold text-slate-900 truncate">{i.name}</p>
-                        <p className="text-[11px] text-slate-500 mt-0.5">
-                          Used in {Math.round(i.frequency_rank ?? 0)} meals
-                        </p>
-                      </div>
-                    </div>
-                    <button
-                      onClick={() => handleMarkStocked(i.id)}
-                      disabled={!!markingId}
-                      className="shrink-0 bg-green-600 text-white text-[11px] font-bold py-2 px-4 rounded-full hover:bg-green-700 active:scale-95 transition-all shadow-sm disabled:opacity-50"
+        {!loading && items.length > 0 && (
+          <div className="flex flex-col gap-6">
+            {out.length > 0 && (
+              <div className="flex flex-col gap-3 rounded-2xl border border-amber-500/20 bg-amber-500/5 p-4">
+                <h2 className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-amber-300/90">
+                  <AlertCircle className="h-3.5 w-3.5" />
+                  Out — likely to annoy you if they run out
+                </h2>
+                <ul className="space-y-2">
+                  {out.map((i) => (
+                    <li
+                      key={i.id}
+                      className="flex items-center justify-between rounded-lg border border-amber-500/20 bg-amber-500/10 px-3 py-2"
                     >
-                      {markingId === i.id ? (
-                        <span className="inline-block h-4 w-4 animate-spin border-2 border-white border-t-transparent rounded-full"></span>
-                      ) : (
-                        "Got it"
-                      )}
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </section>
-          )}
-
-          {/* Low Stock Section */}
-          {low.length > 0 && (
-            <section className="space-y-3 pb-8">
-              <div className="flex items-center justify-between px-1">
-                <h3 className="text-xs font-bold text-orange-500 flex items-center gap-2 uppercase tracking-widest">
-                  <span className="w-1.5 h-1.5 rounded-full bg-orange-500"></span>
-                  Low Stock
-                </h3>
-                <span className="text-[10px] font-bold bg-orange-50 text-orange-500 px-2 py-0.5 rounded-full uppercase">{lowCount} items</span>
-              </div>
-              <div className="space-y-2">
-                {low.map((i) => (
-                  <div key={i.id} className="bg-slate-50 rounded-xl p-4 flex items-center justify-between">
-                    <div className="flex items-center gap-4 flex-1 min-w-0">
-                      <div className="h-10 w-10 rounded-full bg-white flex items-center justify-center text-orange-400 shrink-0">
-                        <span className="material-symbols-outlined text-xl">oil_barrel</span>
+                      <div>
+                        <span className="text-sm font-medium text-amber-100">
+                          {i.name}
+                        </span>
+                        {(i.frequency_rank ?? 0) > 0 && (
+                          <span className="ml-2 text-[10px] text-amber-300/80">
+                            Used in {Math.round(i.frequency_rank ?? 0)} go-to meals
+                          </span>
+                        )}
                       </div>
-                      <div className="min-w-0">
-                        <p className="font-bold text-slate-900 truncate">{i.name}</p>
-                        <p className="text-[11px] text-slate-500 mt-0.5">
-                          Key for {Math.round(i.frequency_rank ?? 0)} recipes
-                        </p>
-                      </div>
-                    </div>
-                    <button
-                      onClick={() => handleMarkStocked(i.id)}
-                      disabled={!!markingId}
-                      className="shrink-0 bg-green-600 text-white text-[11px] font-bold py-2 px-4 rounded-full hover:bg-green-700 active:scale-95 transition-all shadow-sm disabled:opacity-50"
+                      <button
+                        onClick={() => handleMarkStocked(i.id)}
+                        disabled={!!markingId}
+                        className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/30 bg-amber-500/20 px-3 py-1.5 text-xs font-medium text-amber-100 transition hover:bg-amber-500/30 disabled:opacity-50"
+                      >
+                        {markingId === i.id ? (
+                          <span className="h-3 w-3 animate-spin rounded-full border border-amber-200 border-t-transparent" />
+                        ) : (
+                          <Check className="h-3 w-3" />
+                        )}
+                        Got it
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {low.length > 0 && (
+              <div className="flex flex-col gap-3 rounded-2xl border border-slate-700/80 bg-slate-900/50 p-4">
+                <h2 className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
+                  <ShoppingCart className="h-3.5 w-3.5" />
+                  Low
+                </h2>
+                <ul className="space-y-2">
+                  {low.map((i) => (
+                    <li
+                      key={i.id}
+                      className="flex items-center justify-between rounded-lg border border-slate-600 bg-slate-800/80 px-3 py-2"
                     >
-                      {markingId === i.id ? (
-                        <span className="inline-block h-4 w-4 animate-spin border-2 border-white border-t-transparent rounded-full"></span>
-                      ) : (
-                        "Got it"
-                      )}
-                    </button>
-                  </div>
-                ))}
+                      <div>
+                        <span className="text-sm font-medium text-slate-200">
+                          {i.name}
+                        </span>
+                        {(i.frequency_rank ?? 0) > 0 && (
+                          <span className="ml-2 text-[10px] text-slate-500">
+                            Used in {Math.round(i.frequency_rank ?? 0)} go-to meals
+                          </span>
+                        )}
+                      </div>
+                      <button
+                        onClick={() => handleMarkStocked(i.id)}
+                        disabled={!!markingId}
+                        className="inline-flex items-center gap-1.5 rounded-full border border-slate-600 bg-slate-700/60 px-3 py-1.5 text-xs font-medium text-slate-200 transition hover:bg-slate-600/80 disabled:opacity-50"
+                      >
+                        {markingId === i.id ? (
+                          <span className="h-3 w-3 animate-spin rounded-full border border-slate-300 border-t-transparent" />
+                        ) : (
+                          <Check className="h-3 w-3" />
+                        )}
+                        Got it
+                      </button>
+                    </li>
+                  ))}
+                </ul>
               </div>
-            </section>
-          )}
-        </div>
-      )}
+            )}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
