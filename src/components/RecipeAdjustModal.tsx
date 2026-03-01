@@ -101,12 +101,17 @@ export function RecipeAdjustModal({ recipe, onClose, onSaved }: RecipeAdjustModa
           </div>
 
           <div className="border-t border-slate-800 p-4">
+            {finalIngredients.length === 0 && (
+              <p className="mb-2 text-xs text-amber-400">
+                All ingredients removed — restore at least one before saving.
+              </p>
+            )}
             {error && (
               <p className="mb-2 text-xs text-amber-400">{error}</p>
             )}
             <button
               onClick={handleSave}
-              disabled={saving}
+              disabled={saving || finalIngredients.length === 0}
               className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-500/20 py-2.5 text-sm font-medium text-emerald-100 transition hover:bg-emerald-500/30 disabled:opacity-50"
             >
               {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : "Save changes"}

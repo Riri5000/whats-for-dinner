@@ -98,8 +98,9 @@ export function LivingLog() {
   const selectedMeals = mealsByDate.get(selectedKey) ?? [];
   const isToday = toDateKey(selectedDate) === toDateKey(new Date());
 
-  const openLogModal = (preselectId?: string) => {
-    setLogModalPreselectId(preselectId ?? null);
+  const openLogModal = (preselectId?: string | null) => {
+    // Only preselect when an explicit ID is provided; null means "no preselection"
+    setLogModalPreselectId(preselectId !== undefined ? preselectId : null);
     setLogModalOpen(true);
   };
 
@@ -363,7 +364,7 @@ export function LivingLog() {
         onLog={handleLogMeal}
         onQuickNote={handleQuickNote}
         onRecipeCreated={loadData}
-        preSelectRecipeId={logModalPreselectId ?? lastSameWeekday?.recipe_id}
+        preSelectRecipeId={logModalPreselectId}
       />
 
       <SurpriseModal

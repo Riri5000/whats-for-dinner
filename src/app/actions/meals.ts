@@ -72,13 +72,18 @@ export async function runDepletionForRecipe(recipeId: string) {
     if (!name || seenNames.has(name.toLowerCase())) continue;
     seenNames.add(name.toLowerCase());
 
+    // Use exact case-insensitive match by fetching candidates and filtering in-memory.
+    // ilike with a bare string acts as an equality check in Postgres but we make
+    // the intent explicit to avoid accidentally matching "oil" inside "olive oil".
     const { data: staples } = await supabase
       .from("pantry_staples")
-      .select("id, name, status")
-      .ilike("name", name);
+      .select("id, name, status");
     if (!staples?.length) continue;
 
-    const staple = staples[0];
+    const staple = (staples as Array<{ id: string; name: string; status: string }>).find(
+      (s) => s.name.toLowerCase().trim() === name.toLowerCase().trim()
+    );
+    if (!staple) continue;
     const mealCount = getMealCountForIngredientName(
       staple.name,
       mealRecipeIds,

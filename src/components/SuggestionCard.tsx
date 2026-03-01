@@ -157,11 +157,12 @@ export function SuggestionCard({
     setExpanded(false);
   };
 
+  // Don't render until client-mounted to avoid date-based hydration mismatches
+  if (!mounted) return null;
   if (!suggestion.primary && suggestion.alternatives.length === 0) return null;
 
   const { primary, alternatives } = suggestion;
-  const dow = mounted ? selectedDate.getDay() : 0;
-  const dayName = DAY_NAMES[dow];
+  const dayName = DAY_NAMES[selectedDate.getDay()];
 
   return (
     <motion.div

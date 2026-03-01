@@ -46,12 +46,18 @@ Page content (first 12000 chars):
 ${html.slice(0, 12000)}`;
 
   try {
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
     const result = await model.generateContent(prompt);
     const raw = result.response.text();
     if (!raw) return { ok: false, error: "Empty response from Gemini" };
 
-    const parsed = JSON.parse(raw) as ScrapedRecipe;
+    // Strip markdown code fences if Gemini wraps the JSON despite instructions
+    const cleaned = raw
+      .replace(/^```(?:json)?\s*/i, "")
+      .replace(/\s*```\s*$/, "")
+      .trim();
+
+    const parsed = JSON.parse(cleaned) as ScrapedRecipe;
     if (!parsed.title || !Array.isArray(parsed.ingredients)) {
       return { ok: false, error: "Invalid recipe structure" };
     }
